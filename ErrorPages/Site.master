@@ -1,0 +1,1585 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="~/ErrorPages/Site.master.cs" Inherits="SiteMaster" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en">
+<head runat="server">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Free Classifieds,Roommates,Rentals,Used Cars,Buy & Sell Real Estate USA</title>
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+    <link type="text/css" rel="stylesheet" href="../font-awesome/css/font-awesome.min.css"
+        hreflang="en-us" />
+    <link href="../css/custom.css" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="../css/forms.css" rel="stylesheet" hreflang="en-us" />
+    <link href="../css/jha-classes.css" rel="stylesheet" type="text/css" hreflang="en-us" />
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" hreflang="en-us" />
+    <script type="text/javascript" src="../js/jquery-1-11-1.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <script src="../js/jssor.slider.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=places&language=en-AU"></script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".btn-slide").hover(function () {
+                $("#panel").show("slow");
+
+            });
+            $("#cancel").click(function () {
+                $("#panel").hide("slow");
+
+            });
+
+        });
+    </script>
+    <form runat="server">
+        <div class="post-ad">
+            <asp:ImageButton ID="imgPostAd" ValidationGroup="vgPA" PostBackUrl="~/Post-Ad.aspx" ImageUrl="~/images/post-ad.png" runat="server" />
+
+        </div>
+        <asp:ScriptManager runat="server">
+        </asp:ScriptManager>
+        <script>
+            $(function () {
+
+
+                $("#json-one").change(function () {
+
+                    var $dropdown = $(this);
+
+                    $.getJSON.stringify("jsondata/data.json", function (data) {
+
+                        var key = $dropdown.val();
+                        var vals = [];
+
+                        switch (key) {
+                            case 'beverages':
+                                vals = data.beverages.split(",");
+                                break;
+                            case 'roommates':
+                                vals = data.roommates.split(",");
+                                break;
+                            case 'snacks':
+                                vals = data.snacks.split(",");
+                                break;
+                            case 'base':
+                                vals = ['Please choose from above'];
+                        }
+
+                        var $jsontwo = $("#json-two");
+                        $jsontwo.empty();
+                        $.each(vals, function (index, value) {
+                            $jsontwo.append("<option>" + value + "</option>");
+                        });
+
+                    });
+                });
+
+            });
+        </script>
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() > 500) {
+                        $('.scrollToTop').fadeIn();
+                    } else {
+                        $('.scrollToTop').fadeOut();
+                    }
+                });
+
+
+                $('.scrollToTop').click(function () {
+                    $('html, body').animate({ scrollTop: 0 }, 1200);
+                    return false;
+                });
+
+            });
+        </script>
+        <asp:UpdatePanel runat="server">
+            <ContentTemplate>
+
+
+
+                <div class="container-fluid">
+                    <div id="flx" class="row">
+                        <div class="logo col-sm-2 col-md-3 col-lg-2 col-xs-3">
+                            <a href="../Default.aspx">
+                                <img src="<%=this.ResolveUrl("../images/Jhalak-Logo.png")%>" width="80"></a>
+                        </div>
+                        <div id="srch" class="col-sm-6 col-xs-1 col-lg-7 col-md-6">
+                            <div class="sear">
+                                <p class="slide">
+                                   <%-- <div class="btn btn-lg " data-toggle="modal" data-target="#myModal" style="color: red!important">
+                                        <asp:Label ID="lblCity" runat="server" ForeColor="Maroon" Font-Bold="True" Font-Size="Small" CssClass="locationvaluediv"></asp:Label>
+                                        <span class="glyphicon glyphicon-map-marker"></span>
+                                    </div>--%>
+
+                                    <p>
+                                    </p>
+                                    <div id="main-modal" class="main-modal">
+                                        <div id="myModal" class="modal fade modal-pop" role="dialog" tabindex="2">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body location-items">
+                                                        <%--<div class="txtcenter">
+                                                            <h5 class="modalhtag"><i class="fa fa-map-marker"></i>&nbsp;Choose your location</h5>
+                                                        </div>--%>
+                                                        <div class="form-group row ">
+                                                            <%--<script type="text/javascript">
+
+                                                                function ShowHideDiv() {
+                                                                    var RadOne = document.getElementById("RadUsa");
+                                                                    var RadTwo = document.getElementById("UsLocation");
+                                                                    UsLocation.style.display = RadUsa.checked ? "block" : "none";
+
+                                                                    var RadThree = document.getElementById("RadInd");
+                                                                    var RadFour = document.getElementById("IndLocation");
+                                                                    IndLocation.style.display = RadInd.checked ? "block" : "none";
+                                                                }
+                                                            </script>--%>
+                                                            <%--<div class="srchlocations txtcenter col-sm-12">
+                                                                <label>
+                                                                    <input type="radio" id="RadUsa" name="SrchLocations" onclick="ShowHideDiv()" />
+                                                                    USA
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" id="RadInd" name="SrchLocations" onclick="ShowHideDiv()" />
+                                                                    India
+                                                                </label>
+                                                            </div>--%>
+
+                                                            <div id="UsLocation" class="location-items" style="display: none">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <h5 class="selc-country"><span>Popular Cities</span></h5>
+                                                                   <%-- <div class="col-sm-3 col-xs-6 ">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Atlanta, GA, United States")%>'>Atlanta,GA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Austin, TX, United States")%>'>Austin,TX</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Baltimore, MD, United States")%>'>Baltimore,MD</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Boston, MA, United States")%>'>Boston,MA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Chicago, IL, United States")%>'>Chicago,IL</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Cincinnati, OH, United States")%>'>Cincinnati,OH</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Columbus, OH, United States")%>'>Columbus,OH</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Charlotte, NC, United States")%>'>Charlotte,NC</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Cleveland, OH, United States")%>'>Cleveland,OH</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Dallas,TX, United States")%>'>Dallas,TX</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Denver, CO, United States")%>'>Denver,CO</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Durham, NC, United States")%>'>Durham,NC</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Des Moines, IA, United States")%>'>Des Moines,IA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Detroit, MI, United States")%>'>Detroit,MI</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Hartford, CT, United States")%>'>Hartford,CT</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Houston, TX, United States")%>'>Houston,TX</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Indianapolis, IN, United States")%>'>Indianapolis,IN</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Jacksonville, FL, United States")%>'>Jacksonville,FL </a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Kansas City, MO, United States")%>'>Kansas City,MO</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Los Angeles, CA, United States")%>'>Los Angeles,CA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Miami, FL, United States")%>'>Miami,FL</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Memphis, TN, United States")%>'>Memphis,TN</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Minneapolis, MN, United States")%>'>Minneapolis,MN</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Milwaukee, WI, United States")%>'>Milwaukee,WI</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Nashville, TN, United States")%>'>Nashville,TN</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=New York, NY, United States")%>'>New York,NY</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Orlando, FL, United States")%>'>Orlando,FL</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Phoenix, AZ, United States")%>'>Phoenix,AZ</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Philadelphia, PA, United States")%>'>Philadelphia,PA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Pittsburg, PA, United States")%>'>Pittsburg,PA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Raleigh, NC, United States")%>'>Raleigh,NC</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Richmond, VA, United States")%>'>Richmond,VA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Sacramento, CA, United States")%>'>Sacramento,CA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=New Jersey, NJ, United States")%>'>New Jersey,NJ</a></li>
+                                                                        </ul>
+                                                                    </div>--%>
+                                                                </div>
+                                                                <%--<div class="col-sm-12">
+                                                                    <div class="col-sm-3 col-xs-6 ">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=San Antonio, TX, United States")%>'>San Antonio,TX</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=San Francisco, CA, United States")%>'>San Francisco,CA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=San Diego, CA, United States")%>'>San Diego,CA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Seattle, WA, United States")%>'>Seattle,WA</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=St Louis, MO, United States")%>'>St Louis,MO</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=St Paul, MN, United States")%>'>St Paul,MN</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Tampa, FL, United States")%>'>Tampa,FL</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Washington DC, United States")%>'>Washington D.C</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>--%>
+                                                            </div>
+                                                            <%--<div id="IndLocation" class="location-items" style="display: none">
+                                                                <div class="col-sm-12">
+                                                                    <h5 class="selc-country"><span>Popular Cities</span></h5>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Bangalore, Karnataka, India")%>'>Bangalore</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Chennai, Tamil Nadu, India")%>'>Chennai</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Delhi, DELHI, India")%>'>Delhi</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Hyderabad, Telangana, India")%>'>Hyderabad</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Mumbai, Maharashatra, India")%>'>Mumbai</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Ahmedabad, Gujarat, India")%>'>Ahmedabad</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Kolkata, West Bengal, India")%>'>Kolkata</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Pune, Maharashatra, India")%>'>Pune</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Agra, Uttar Pradesh, India")%>'>Agra</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Allahabad, Uttar Pradesh, India")%>'>Allahabad</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Amritsar, Punjab, India")%>'>Amritsar</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Aurangabad, Maharashtra, India")%>'>Aurangabad</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Bhopal, Madhya Pradesh, India")%>'>Bhopal</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Bhubaneswar, Odisha, India")%>'>Bhubaneswar</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Calcutta, West Bengal, India")%>'>Calicut</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Chandigarh, India")%>'>Chandigarh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Cochin, Kerala, India")%>'>Cochin</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Coimbatore, Tamil Nadu, India")%>'>Coimbatore</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Faridabad, Haryana, India")%>'>Faridabad</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Ghaziabad, Uttar Pradesh, India")%>'>Ghaziabad</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Gurugram, Haryana, India")%>'>Gurgaon</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Noida, Uttar Pradesh, India")%>'>Noida</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <h5 class="selc-country"><span>All States</span></h5>
+                                                                    <div class="col-sm-3 col-xs-6 cities">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Andaman and Nicobar Islands, India")%>'>Andaman &amp; Nicobar Islands</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Andhra Pradesh, India")%>'>Andhra Pradesh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Arunachal Pradesh, India")%>'>Arunachal Pradesh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Assam, India")%>'>Assam</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Bihar, India")%>'>Bihar</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Chandigarh, India")%>'>Chandigarh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Chhattisgarh, India")%>'>Chhattisgarh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Dadra and Nagar Haveli, India")%>'>Dadra &amp; Nagar Haveli</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6 cities">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Daman and Diu, India")%>'>Daman &amp; Diu</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Delhi, India")%>'>Delhi</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Goa, India")%>'>Goa</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Gujarat, India")%>'>Gujarat</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Haryana, India")%>'>Haryana</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Himachal Pradesh, India")%>'>Himachal Pradesh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Jammu & Kashmir, India")%>'>Jammu &amp; Kashmir</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Jharkhand, India")%>'>Jharkhand</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Karnataka, India")%>'>Karnataka</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Kerala, India")%>'>Kerala</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6 cities">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Lakshadweep, India")%>'>Lakshadweep</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Madhya Pradesh, India")%>'>Madhya Pradesh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Maharashtra, India")%>'>Maharashtra</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Manipur, India")%>'>Manipur</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Meghalaya, India")%>'>Meghalaya</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Mizoram, India")%>'>Mizoram</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Nagaland, India")%>'>Nagaland</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Odisha, India")%>'>Odisha</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Pondicherry, Puducherry, India")%>'>Pondicherry</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-xs-6">
+                                                                        <ul>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Punjab, India")%>'>Punjab</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Rajasthan, India")%>'>Rajasthan</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Sikkim, India")%>'>Sikkim</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Tamil Nadu, India")%>'>Tamil Nadu</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Telangana, India")%>'>Telangana</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Tripura, India")%>'>Tripura</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Uttar Pradesh, India")%>'>Uttar Pradesh</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=Uttaranchal, India")%>'>Uttaranchal</a></li>
+                                                                            <li><a href='<%=this.ResolveUrl("~/Default.aspx?loc=West Bengal, India")%>'>West Bengal</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>--%>
+                                                            <div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p>
+                                    </p>
+
+                                    <p>
+                                    </p>
+
+                                    <p>
+                                    </p>
+
+                                    <p>
+                                    </p>
+
+                                    <p>
+                                    </p>
+
+                                </p>
+                            </div>
+
+
+
+                        </div>
+                        <div class="col-sm-4 col-md-3 col-lg-3 jhklog">
+                            <div>
+                                
+
+                                <asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="false">
+							<AnonymousTemplate>
+
+								<div>
+									<a href="http://jhalak.com/"><span class="glyphicon glyphicon-home"></span>
+										<br />
+										Home</a>
+								</div>
+
+
+								<div>
+									<a href="http://jhalak.com/Sign-Up.aspx#SignUpAnchor"><span class=" glyphicon glyphicon-user"></span>
+										<br />
+										Register</a>
+								</div>
+								<div>
+									<a href="http://jhalak.com/My-Posts.aspx"><span class="glyphicon glyphicon-log-in"></span>
+										<br />
+										Login</a>
+								</div>
+
+							</AnonymousTemplate>
+							<LoggedInTemplate>
+								Welcome: 
+                                   
+								<asp:LoginName ID="HeadLoginName" runat="server" CssClass="jhk-user" />
+								!
+                           
+								<br />
+								<span class="glyphicon glyphicon-user"></span>
+								<asp:HyperLink ID="hlMyAccount" NavigateUrl="http://jhalak.com/My-Posts.aspx" runat="server" Style="color: #000;">My Account</asp:HyperLink>
+								&nbsp;&nbsp; <span class="glyphicon glyphicon-log-out"></span>&nbsp;<asp:LoginStatus
+									ID="HeadLoginStatus" runat="server" Style="color: #000;" LogoutAction="Redirect"
+									LogoutText="Log Out" LogoutPageUrl="http://jhalak.com/Default.aspx?L=out" />
+							</LoggedInTemplate>
+							<RoleGroups>
+							</RoleGroups>
+						</asp:LoginView>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div id="jhnav">
+					<nav class="navbar navbar-default">
+						<div class="navbar-header">
+							<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+						</div>
+						<div class="collapse navbar-collapse js-navbar-collapse">
+							<ul>
+								<li>
+									<ul class="nav navbar-nav">
+										<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Roommates</a>
+											<ul class="dropdown-menu mega-dropdown-menu row">
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header main-menu-link"><a href="http://roommates.jhalak.com/" target="_blank">Roommates</a></li>
+														<li><a href="http://roommates.jhalak.com/Ads-List.aspx?SId=1&CId=1">Looking for a room</a></li>
+														<li><a href="http://roommates.jhalak.com/Ads-List.aspx?SId=2&CId=1">I have a room to share</a></li>
+														<li><a href="http://roommates.jhalak.com/Ads-List.aspx?SId=193&CId=1">Paying Guest</a></li>
+														<li><a href="http://roommates.jhalak.com/Ads-List.aspx?SId=222&CId=1">Sub Lease</a></li>
+
+
+													</ul>
+
+
+												</li>
+												<li class="col-sm-3">
+													<div>
+
+
+
+														<asp:GridView ID="gvRommates" CssClass="table txtflow-grid" runat="server" BorderWidth="0" ShowHeader="false"
+															AllowPaging="true" PageSize="5" AutoGenerateColumns="false" HorizontalAlign="Center">
+															<Columns>
+																<asp:TemplateField ItemStyle-HorizontalAlign="left">
+																	<ItemTemplate>
+																		<div>
+
+
+																			<div>
+																				<b>
+																					<asp:HyperLink ID="HyperLink2" Text='<%#Eval("AdTitle") %>' CssClass="txtflow" runat="server" NavigateUrl='<%# String.Format("http://roommates.jhalak.com/Roommate-Detail.aspx?id={0}&loc={1}", Eval("AdId"),Eval("City"))%>'></asp:HyperLink></b>
+																			</div>
+																			<div>
+																				<asp:Label ID="lblLocation" CssClass="txtflow" Text='<%#Eval("Location") %>' runat="server"></asp:Label>
+																			</div>
+
+
+																		</div>
+
+																	</ItemTemplate>
+																</asp:TemplateField>
+
+															</Columns>
+															<PagerStyle CssClass="jhkpagination" />
+														</asp:GridView>
+
+													</div>
+
+
+												</li>
+
+											</ul>
+										</li>
+									</ul>
+									<ul class="nav navbar-nav">
+										<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Local Services </a>
+											<ul class="dropdown-menu mega-dropdown-menu row">
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://flipflop.jhalak.com" target="_blank">Buy & Sell Products </a></li>
+
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=16&CId=4">Baby & Kids Stuff</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=17&CId=4">Books For Sale</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=18&CId=4">Business Products</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=19&CId=4">Cameras & Camcoders</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=20&CId=4">Clothing & Footwear</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=21&CId=4">Computers & Accessories</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=22&CId=4">Electronic Appliances</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=23&CId=4">Fashion & Jewellery</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=24&CId=4">Furniture & Home Decor</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=25&CId=4">Gaming Gadgets</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=26&CId=4">Home Appliances</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=27&CId=4">Garage Sale / House Clearance</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=184&CId=4">Household Items</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=185&CId=4">Kitchen Appliances</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=186&CId=4">Mobile Phones</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=187&CId=4">Music Instruments</a></li>
+														<%-- <li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=188&CId=4">Pets</a></li>--%>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=189&CId=4">Sports & Fitness Products</a></li>
+														<%--       <li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=190&CId=2">Travel & Vacations</a></li>--%>
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://repairs.jhalak.com" target="_blank">Repairs</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=94&CId=15">Appliances & Electronics</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=95&CId=15">Computers & Laptops</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=96&CId=15">Tablets, Phones & Gaming consoles</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=97&CId=15">Fitness Equipments</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=98&CId=15">Lawn & Garden</a></li>
+														<li><a href="http://repairs.jhalak.com/Ads-List.aspx?SId=99&CId=15">HVAC Repairs</a></li>
+														<%--    <li><a href="http://repairs.jhalak.com/Ads-List.aspx?CId=20">Auto Repairs</a></li>--%>
+													</ul>
+												</li>
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://attorney.jhalak.com" target="_blank">Legal and Immigration Services</a></li>
+														<li><a href="http://attorney.jhalak.com/Ads-List.aspx?SId=119&CId=19">Immigration Services</a></li>
+														<li><a href="http://attorney.jhalak.com/Ads-List.aspx?SId=120&CId=19">Legal Attorney Services</a></li>
+														<li><a href="http://attorney.jhalak.com/Ads-List.aspx?SId=163&CId=19">Notary services</a></li>
+														<li><a href="http://attorney.jhalak.com/Ads-List.aspx?SId=164&CId=19">Other Legal Immigration Services</a></li>
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://shopping.jhalak.com" target="_blank">Stores and Malls</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=35&CId=7">Jewellery Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=36&CId=7">Apparel Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=37&CId=7">Dress Material Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=38&CId=7">Cosmetics Store</a></li>
+
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=39&CId=7">Luggage Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=40&CId=7">Furniture Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=41&CId=7">Rug Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=42&CId=7">Tailoring Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=43&CId=7">Florist Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=44&CId=7">Musical Instruments Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=228&CId=7">Others</a></li>
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://investandinsure.jhalak.com" target="_blank">Finance, Investments and Insurance</a></li>
+														<li><a href="http://investandinsure.jhalak.com/Ads-List.aspx?SId=118&CId=18">Insurance Services</a></li>
+														<li><a href="http://investandinsure.jhalak.com/Ads-List.aspx?SId=117&CId=18">Investments Advisors</a></li>
+														<li><a href="http://investandinsure.jhalak.com/Ads-List.aspx?SId=116&CId=18">Money Transfer Services</a></li>
+
+														<li class="dropdown-header  main-menu-link"><a href="http://automobile.jhalak.com" target="_blank">Automobiles</a></li>
+														<li><a href="http://automobile.jhalak.com/Sell-Used-Cars-List.aspx">Sell Used Cars</a></li>
+														<li><a href="http://automobile.jhalak.com/Ads-List.aspx?SId=70&CId=11">Auto & Used Car Dealers</a></li>
+														<%--   <li><a href="http://automobile.jhalak.com/Ads-List.aspx?SId=261&CId=11">Buy Used Cars</a></li>--%>
+
+														<li><a href="http://www.automobile.jhalak.com/Ads-List.aspx?SId=71&CId=11">Car Repair & Service</a></li>
+														<li><a href="http://automobile.jhalak.com/Ads-List.aspx?SId=72&CId=11">Car Washing & Detailing</a></li>
+
+
+
+													</ul>
+												</li>
+												<li class="col-sm-3">
+													<ul>
+
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://domestic.jhalak.com" target="_blank">Domestic Services</a></li>
+														<li><a href="http://domestic.jhalak.com/Looking-For-DayCare">Looking for Daycare</a></li>
+														<li><a href="http://domestic.jhalak.com/Looking-For-Maid-Services">Looking for Maid Service</a></li>
+														<li><a href="http://domestic.jhalak.com/Looking-For-Nanny-Baby-Sitter">Looking for Nanny/Babbysitter</a></li>
+														<li><a href="http://www.domestic.jhalak.com/Looking-For-Elder-Care-Services">Looking for Elder Care Service</a></li>
+
+														<li><a href="http://domestic.jhalak.com/Offering-DayCare-Services">Offering Daycare Services</a></li>
+														<li><a href="http://domestic.jhalak.com/Offering-Maid-Services">Offering Maid Services</a></li>
+														<li><a href="http://www.domestic.jhalak.com/Offering-Nanny-Baby-Sitter">Offering Nanny/Babysitter</a></li>
+														<li><a href="http://domestic.jhalak.com/Offering-Elder-Care-Services">Offering Elder Care Services</a></li>
+														<li><a href="http://domestic.jhalak.com/Disabled-Handicapped">Disabled and Handicapped</a></li>
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://party.jhalak.com" target="_blank">Party Services</a></li>
+														<li><a href="http://party.jhalak.com/Ads-List.aspx?SId=171&CId=21">Catering Services</a></li>
+														<li><a href="http://party.jhalak.com/Ads-List.aspx?SId=172&CId=21">DJ & Band Services</a></li>
+														<li><a href="http://party.jhalak.com/Ads-List.aspx?SId=173&CId=21">Photographer/Videographer</a></li>
+														<li><a href="http://party.jhalak.com/Ads-List.aspx?SId=174&CId=21">Decorators</a></li>
+
+
+
+														<%--  <li class="dropdown-header heading_menus"><a href="party.jhalak.com/Ads-List.aspx?SId=170&CId=21">Devotional and Astrology Services</a></li>--%>
+														<li class="dropdown-header  main-menu-link"><a href="http://business.jhalak.com" target="_blank">Business Opportunities</a></li>
+														<li><a href="http://business.jhalak.com/Sell-Business-List.aspx?type=1">Commercial Business</a></li>
+														<li><a href="http://business.jhalak.com/Sell-Business-List.aspx?type=2">Home Based Business</a></li>
+														<li><a href="http://business.jhalak.com/Franchise-List.aspx">Franchise</a></li>
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://taxservices.jhalak.com" target="_blank">CPA and Tax Services</a></li>
+														<li><a href="http://taxservices.jhalak.com/Ads-List.aspx?SId=166&CId=20">Certified Public Accountants-CPA</a></li>
+														<li><a href="http://taxservices.jhalak.com/Ads-List.aspx?SId=167&CId=20">Tax Services-Returns</a></li>
+
+														<li class="dropdown-header  main-menu-link"><a href="http://astrology.jhalak.com">Astrology Services</a></li>
+														<li><a href="http://astrology.jhalak.com/Ads-List.aspx?SId=246&CId=23">Vedic Astrology</a></li>
+														<li><a href="http://astrology.jhalak.com/Ads-List.aspx?SId=240&CId=23">Numerology</a></li>
+														<li><a href="http://astrology.jhalak.com">More</a></li>
+
+
+													</ul>
+												</li>
+												<li class="col-sm-3">
+													<ul>
+
+
+
+
+														<li class="dropdown-header  main-menu-link"><a href="http://services.jhalak.com" target="_blank">Business Services</a></li>
+														<li><a href="http://services.jhalak.com/Ads-List.aspx?SId=73&CId=12">Advertising Agencies</a></li>
+														<li><a href="http://services.jhalak.com/Ads-List.aspx?SId=74&CId=12">Digital Marketing & Web Design</a></li>
+														<li><a href="http://services.jhalak.com/Ads-List.aspx?SId=75&CId=12">Printing & Signs Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=76&CId=12">Security Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=201&CId=12">Courier Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=202&CId=12">Funeral Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=203&CId=12">General Office Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=204&CId=12">Interpreting & Translation</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=205&CId=12">Marketing</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=206&CId=12">Market Research</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=207&CId=12">Secretarian Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=208&CId=12">Sheredding Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=209&CId=12">Storage Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=210&CId=12">Writing & Literature Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=211&CId=12">Child Care Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=213&CId=12">Handyman/Tradesmen Services</a></li>
+														<li><a href="http://www.services.jhalak.com/Ads-List.aspx?SId=214&CId=12">Suppliers & Wholesellers</a></li>
+
+														<li class="dropdown-header  main-menu-link"><a href="http://rituals.jhalak.com">Ritual Services</a></li>
+														<li><a href="http://www.rituals.jhalak.com/Ads-List.aspx?SId=80&CId=13">Puja Services</a></li>
+														<li><a href="http://www.rituals.jhalak.com/Ads-List.aspx?SId=78&CId=13">Vratham/Katha</a></li>
+														<li><a href="http://www.rituals.jhalak.com">More</a></li>
+
+
+
+													</ul>
+
+												</li>
+												<li class="col-sm-3">
+													<ul>
+
+														<li class="dropdown-header  main-menu-link"><a href="http://pets.jhalak.com" target="_blank">Pets</a></li>
+
+														<li><a href="http://pets.jhalak.com/Ads-List.aspx?SId=217&CId=22">Pets for Sale</a></li>
+														<li><a href="http://pets.jhalak.com/Ads-List.aspx?SId=218&CId=22">Veternity Hospitals</a></li>
+														<li><a href="http://pets.jhalak.com">More</a></li>
+
+
+
+													</ul>
+
+												</li>
+
+											</ul>
+										</li>
+									</ul>
+
+									<ul class="nav navbar-nav">
+										<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Life & Living </a>
+											<ul class="dropdown-menu mega-dropdown-menu row">
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://fitness.jhalak.com" target="_blank">Beauty</a></li>
+														<li><a href="http://fitness.jhalak.com/Ads-List.aspx?SId=198&CId=6">Jewellery Designers</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=20&CId=4">Clothing & Footwear</a></li>
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=23&CId=4">Fashion & Jewellery</a></li>
+
+														<li><a href="http://fitness.jhalak.com/Ads-List.aspx?SId=31&CId=6">Spas and Beauty saloons</a></li>
+
+														<li><a href="http://fitness.jhalak.com/Ads-List.aspx?SId=32&CId=6">Mahendi & Tatoo Designers</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=35&CId=7">Jewellery Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=36&CId=7">Apparel Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=37&CId=7">Dress Material Stores</a></li>
+														<li><a href="http://shopping.jhalak.com/Ads-List.aspx?SId=38&CId=7">Cosmetics Store</a></li>
+													</ul>
+												</li>
+
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://healthcare.jhalak.com">Healthcare & Doctors</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=45&CId=8">Indian Doctors</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=46&CId=8">Ayurvedic</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=47&CId=8">Homeopathy</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=48&CId=8">Dentist</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=49&CId=8">Acupuncture</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=50&CId=8">Chiropractor</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=51&CId=8">Dietician & Nutritionist</a></li>
+
+
+													</ul>
+												</li>
+												<li class="col-sm-3">
+													<ul>
+
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=53&CId=8">Physical Therapist</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=54&CId=8">Counselling</a></li>
+
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=56&CId=8">Ayurvedic Medicine Stores</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=192&CId=8">Homeopathy Medicine Store</a></li>
+
+													</ul>
+												</li>
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://fitness.jhalak.com" target="_blank">Fitness</a></li>
+														<%--	<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=187&CId=4">Music Instruments</a></li>--%>
+
+														<li><a href="http://flipflop.jhalak.com/Ads-List.aspx?SId=189&CId=4">Sports & Fitness Products</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=55&CId=8">Yoga Instructor</a></li>
+														<li><a href="http://healthcare.jhalak.com/Ads-List.aspx?SId=52&CId=8">Fitness Trainer</a></li>
+														<li><a href="http://fitness.jhalak.com/Ads-List.aspx?SId=30&CId=6">Fitness Centers</a></li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+
+
+
+
+
+
+
+									<%--  <ul class="nav navbar-nav">
+                                        <li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Eat Street </a>
+
+
+                                                <li class="col-sm-3">
+                                            <ul>
+                                                <li class="dropdown-header">Eat Street<span class="cominglnk"></span>
+                                                  <ul class="dropdown-menu mega-dropdown-menu row">
+                                       
+                                               
+                                                </ul>
+                                            </li>
+                                                </ul>
+                                                </li>
+                                        </li>
+                                    </ul>--%>
+
+
+
+									<ul class="nav navbar-nav">
+										<li class="dropdown mega-dropdown"><a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Eat Street </a>
+											<ul class="dropdown-menu mega-dropdown-menu row">
+												<li class="col-sm-3">
+													<ul>
+														<li class="dropdown-header  main-menu-link"><a href="http://eatstreet.jhalak.com" target="_blank">Eat Street</a></li>
+														<li><a href="http://eatstreet.jhalak.com/Hotels-List.aspx">Restaurants</a></li>
+														<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx">Food Stores</a></li>
+														<li><a href="http://eatstreet.jhalak.com/Cooking-Academy-List.aspx">Cooking Academy</a></li>
+														<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Grocery Store">Grocery Stores</a></li>
+												</li>
+											</ul>
+
+											<li class="col-sm-3">
+												<ul>
+													<li><a href="http://eatstreet.jhalak.com/Recipe-List.aspx?type=Veg">Vegan Food</a></li>
+													<li><a href="http://eatstreet.jhalak.com/Recipe-List.aspx?type=NonVeg">Non-Vegan Foods</a></li>
+													<li><a href="http://eatstreet.jhalak.com/Cocktail-List.aspx">Cocktail Recipe</a></li>
+													<li><a href="http://eatstreet.jhalak.com/Cooking-Tips-List.aspx">Cooking Tips</a></li>
+													<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Bakery">Bakery</a></li>
+												</ul>
+											</li>
+
+										<li class="col-sm-3">
+											<ul>
+
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Meat Shops">Meat Shops</a></li>
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Fast Food">Fast Food</a></li>
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Produce">Produce Stores</a></li>
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Home Food Stores">Home Food Stores</a></li>
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Catering Services">Catering Services</a></li>
+												<li><a href="http://eatstreet.jhalak.com/Food-Store-List.aspx?StoreType=Other Food Stores">Other Food Stores</a></li>
+
+											</ul>
+										</li>
+
+
+									</ul>
+								</li>
+							</ul>
+
+
+
+
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Events </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://Events.jhalak.com" target="_blank">Events</a></li>
+												<li><a href="http://events.jhalak.com/Events-List.aspx?Type=week">This Week Events</a></li>
+												<li><a href="http://events.jhalak.com/Events-List.aspx?Type=recent">Recent Announced Events</a></li>
+												<li><a href="http://events.jhalak.com/Events-List.aspx?Type=upcoming">Upcomming Events</a></li>
+												<li><a href="http://events.jhalak.com/Events-List.aspx?Type=ticketed">Ticketed Events</a></li>
+												<li><a href="http://events.jhalak.com/Venue-List.aspx">Venues</a></li>
+												<li><a href="http://events.jhalak.com/Organiser-Listing.aspx">Event Organizers</a></li>
+												<li><a href="http://events.jhalak.com/Supplier-Network-List.aspx">Supplier Networks</a></li>
+
+
+
+
+												<%--
+                                                                <li class="dropdown-header  heading_menus"><a href="http://events.jhalak.com/Online-Event-Management-System-USA-India">Today’s Events</a></li>
+                                                                <li class="dropdown-header heading_menus"><a href="http://events.jhalak.com/Upcoming-Events.aspx">Upcoming coming</a></li>
+                                                                <li class="dropdown-header heading_menus"><a href="http://events.jhalak.com/Supplier-Network-List.aspx?qstrContent=Budgeting">Supplier Network</a></li>
+                                                                <li class="dropdown-header heading_menus"><a href="http://events.jhalak.com/Event-Organizers.aspx">Organizers</a></li>
+                                                                <li class="dropdown-header heading_menus"><a href="http://events.jhalak.com/Venues-List.aspx">Venues</a></li>
+                                                                <li class="dropdown-header heading_menus"><a href="http://events.jhalak.com/Ticketed-Events.aspx">Ticketed Events</a></li>--%>
+												<%--<li class="dropdown-header heading_menus">Events</li>
+
+                                                                <li><a href="#">Concerts & Tour Dates</a></li>
+                                                                <li><a href="#">Conferences & Trade shows</a></li>
+                                                                <li><a href="#">Comedy Events</a></li>
+                                                                <li><a href="#">Education</a></li>
+                                                                <li><a href="#">Kids & Family</a></li>
+                                                                <li><a href="#">Art Galleries & Exhibits</a></li>
+                                                                <li><a href="#">Health & Wellness</a></li>--%>
+										</li>
+									</ul>
+								</li>
+								<%-- <li class="col-sm-3">
+                                                    <ul>
+                                                        <li><a href="#">Holiday Events</a></li>
+                                                        <li><a href="#">Literary & Books</a></li>
+                                                        <li><a href="#">Museums & Attractions</a></li>
+                                                        <li><a href="#">Neighbourhood</a></li>
+                                                        <li><a href="#">Business & Networking</a></li>
+                                                        <li><a href="#">Nightlife & Singles</a></li>
+                                                        <li><a href="#">University & Alumni</a></li>
+                                                        <li><a href="#">Organization & Meetups</a></li>
+                                                        <li><a href="#">Outdoor & Recreation</a></li>
+                                                        <li><a href="#">Performing Arts</a></li>
+                                                        <li><a href="#">Pets</a></li>
+                                                        <li><a href="#">Politics</a></li>
+                                                        <li><a href="#">Sales & Retails</a></li>
+                                                        <li><a href="#">Science</a></li>
+                                                        <li><a href="#">Religion & Spirituality</a></li>
+
+
+
+                                                    </ul>
+                                                </li>--%>
+								<%--  <li class="col-sm-3">
+                                                    <ul>
+                                                        <li><a href="#">Sports</a></li>
+                                                        <li><a href="#">Technology</a></li>
+                                                        <li><a href="#">Other & Miscelleanous</a></li>
+
+
+
+                                                        <li><a href="#">Event Concept Design & Planning</a></li>
+                                                        <li><a href="#">Budgeting</a></li>
+                                                        <li><a href="#">Logistic & Vendor Management</a></li>
+                                                        <li><a href="#">Ticketing Registration</a></li>
+                                                        <li><a href="#">Permit & License Procurement</a></li>
+                                                        <li><a href="#">Exhibit & Sponsor Management</a></li>
+                                                        <li><a href="#">Marketing & Communications</a></li>
+                                                        <li><a href="#">Artists & Speaker Management</a></li>
+                                                        <li><a href="#">Audio/Video Services</a></li>
+                                                        <li><a href="#">Mobile Applications</a></li>
+
+
+
+                                                    </ul>
+                                                </li>--%>
+								<%-- <li class="col-sm-3">
+                                                    <ul>
+                                                        <li><a href="#">Accounting & Revenue</a></li>
+                                                        <li><a href="#">Food & Beverage Planning</a></li>
+                                                        <li><a href="#">Decor Planning & Management</a></li>
+                                                        <li><a href="#">Entertainment & Attractions</a></li>
+                                                        <li><a href="#">Sound & Lighting Management</a></li>
+                                                        <li><a href="#">Transport Management</a></li>
+                                                        <li><a href="#">Security & Emergency Medical Service</a></li>
+                                                        <li><a href="#">Site Clean-up & Recycling</a></li>
+                                                        <li><a href="#">Party Gifts & Goodie bags</a></li>
+                                                        <li><a href="#">Excursions & Activities Planning</a></li>
+
+                                                    </ul>
+                                                </li>--%>
+							</ul>
+							</li>
+                            </ul>
+                            <ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Trainings </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://trainings.jhalak.com" target="_blank">Trainings</a></li>
+												<li><a href="http://trainings.jhalak.com/Ads-List.aspx?SId=272&CId=25&&t=Classroom-Training">IT Trainings-Classroom</a></li>
+												<li><a href=" http://trainings.jhalak.com/Ads-List.aspx?SId=272&CId=25&&t=Online-Training">IT Trainings-Online</a></li>
+												<li><a href="http://trainings.jhalak.com/Ads-List.aspx?SId=273&CId=25">Non-IT Trainings</a></li>
+
+											</ul>
+										</li>
+
+									</ul>
+								</li>
+							</ul>
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Jobs </a>
+
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://jobs.jhalak.com" target="_blank">Jobs</a></li>
+												<li><a href="http://jobs.jhalak.com/Ads-List.aspx?type=IT">IT Jobs</a></li>
+												<li><a href="http://jobs.jhalak.com/Ads-List.aspx?type=Non-IT">Non-IT Jobs</a></li>
+												<li><a href="http://jobs.jhalak.com/Employers-List.aspx">Employers</a></li>
+
+											</ul>
+										</li>
+
+									</ul>
+
+
+
+									<%-- <ul class="dropdown-menu mega-dropdown-menu row">
+                                                <li class="col-sm-3">
+                                                    <ul>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Recent and Popular Jobs</a> </li>
+                                                        <li class="dropdown-header heading_menus"><a href="#">IT Jobs </a></li>
+
+
+
+                                                        <li class="dropdown-header heading_menus"><a href="#">Location wise</a></li>
+
+
+
+
+
+                                                    </ul>
+                                                </li>
+                                                <li class="col-sm-3">
+                                                    <ul>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Non IT Jobs</a></li>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Services</a></li>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Job Boards and News</a></li>
+
+
+
+                                                    </ul>
+                                                </li>
+                                                <li class=" col-sm-3">
+                                                    <ul>
+
+                                                        <li class="dropdown-header heading_menus"><a href="#">Seekers</a></li>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Employers</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>--%>
+								</li>
+							</ul>
+
+
+
+
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tournaments</a>
+
+									<ul class="dropdown-menu mega-dropdown-menu row del-bg">
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://tournaments.jhalak.com" target="_blank">Tournaments</a></li>
+												<li><a href="http://cricket.jhalak.com/Organizers">Organizers</a></li>
+												<li><a href="http://cricket.jhalak.com/Grounds">Grounds</a></li>
+											</ul>
+										</li>
+										<%-- <li class="col-sm-2">
+                                                    <ul>
+                                                        <li class="dropdown-header">Sports Home &nbsp;<span class="cominglnk"></span></li>
+
+                                                        <li><a href="#">Sports Managers</a></li>
+                                                        <li><a href="http://cricket.jhalak.com/Sports-News">Sports News</a></li>
+
+                                                        <li><a href="http://cricket.jhalak.com/Organizers">Organizers</a></li>
+
+
+                                                        <li><a href="#">Coaches</a></li>
+                                                        <li><a href="http://cricket.jhalak.com/Grounds">Grounds</a></li>
+
+
+                                                    </ul>
+                                                </li>--%>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://cricket.jhalak.com" target="_blank">Cricket</a></li>
+												<%--  <li><a href="<%=this.ResolveUrl("http://cricket.jhalak.com/")%>">Home</a></li>--%>
+
+												<li><a href="http://cricket.jhalak.com/Tournaments">Tournaments</a></li>
+												<%--<li><a href="http://cricket.jhalak.com/Organizers">Organizers</a></li>--%>
+												<li><a href="http://cricket.jhalak.com/Teams">Teams</a></li>
+												<li><a href="http://cricket.jhalak.com/Players">Players</a></li>
+												<li><a href="http://cricket.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://cricket.jhalak.com/Scores">Scores</a></li>
+												<%--<li><a href="http://cricket.jhalak.com/Grounds">Grounds</a></li>--%>
+												<li><a href="http://cricket.jhalak.com/Photo-Gallery">Gallery</a></li>
+												<li class="dropdown-header main-menu-link"><a href="http://cricket.jhalak.com/Cricket_Live_Matches.aspx">LIVE SCORE</a></li>
+
+												<%-- <a href="#"><li class="dropdown-header">Jhalak Chess Manager</li></a>--%>
+											</ul>
+										</li>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://volleyball.jhalak.com" target="_blank">Volleyball</a></li>
+												<%--  <li><a href="<%=this.ResolveUrl("http://volleyball.jhalak.com/")%>">Home</a></li>--%>
+												<li><a href="http://volleyball.jhalak.com/Tournaments">Tournaments</a></li>
+												<%--<li><a href="http://volleyball.jhalak.com/Organizers">Organizers</a></li>--%>
+												<li><a href="http://volleyball.jhalak.com/Teams">Teams</a></li>
+												<li><a href="http://volleyball.jhalak.com/Players">Players</a></li>
+												<li><a href="http://volleyball.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://volleyball.jhalak.com/Scores">Scores</a></li>
+												<%--<li><a href="http://volleyball.jhalak.com/Grounds">Grounds</a></li>--%>
+												<li><a href="http://volleyball.jhalak.com/Photo-Gallery">Gallery</a></li>
+
+											</ul>
+										</li>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://tennis.jhalak.com" target="_blank">Tennis</a></li>
+												<%-- <li><a href="<%=this.ResolveUrl("http://tennis.jhalak.com/")%>">Home</a></li>--%>
+												<li><a href="http://tennis.jhalak.com/Tournaments">Tournaments</a></li>
+												<%--<li><a href="http://tennis.jhalak.com/Organizers">Organizers</a></li>--%>
+												<li><a href="http://tennis.jhalak.com/Players">Players</a></li>
+												<li><a href="http://tennis.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://tennis.jhalak.com/Scores">Scores</a></li>
+												<%--<li><a href="http://tennis.jhalak.com/Grounds">Grounds</a></li>--%>
+												<li><a href="http://tennis.jhalak.com/Photo-Gallery">Gallery</a></li>
+
+											</ul>
+										</li>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://badminton.jhalak.com" target="_blank">Badminton </a></li>
+												<%-- <li><a href="http://badminton.jhalak.com/">Home</a></li>--%>
+
+												<li><a href="http://badminton.jhalak.com/Scores">Score board</a></li>
+
+
+
+												<li><a href="http://badminton.jhalak.com/Players">Players</a></li>
+												<li><a href="http://badminton.jhalak.com/Schedules">Schedules</a></li>
+
+
+												<li class="dropdown-header  main-menu-link"><a href="http://chess.jhalak.com" target="_blank">Chess</a></li>
+												<%--  <li><a href="<%=this.ResolveUrl("http://chess.jhalak.com/")%>">Home</a></li>--%>
+												<li><a href="http://chess.jhalak.com/Tournaments">Tournaments</a></li>
+												<%--<li><a href="http://chess.jhalak.com/Organizers">Organizers</a></li>--%>
+												<li><a href="http://chess.jhalak.com/Players">Players</a></li>
+												<li><a href="http://chess.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://chess.jhalak.com/Scores">Scores</a></li>
+												<%--<li><a href="http://chess.jhalak.com/Grounds">Grounds</a></li>--%>
+												<li><a href="http://chess.jhalak.com/Photo-Gallery">Gallery</a></li>
+
+
+											</ul>
+										</li>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://carrom.jhalak.com" target="_blank">Carroms</a></li>
+												<%--  <li><a href="<%=this.ResolveUrl("http://carrom.jhalak.com/")%>">Home</a></li>--%>
+												<li><a href="http://carrom.jhalak.com/Tournaments">Tournaments</a></li>
+												<%--<li><a href="http://carrom.jhalak.com/Organizers">Organizers</a></li>--%>
+												<%--<li><a href="http://carrom.jhalak.com/Teams">Teams</a></li>--%>
+												<li><a href="http://carrom.jhalak.com/Players">Players</a></li>
+												<li><a href="http://carrom.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://carrom.jhalak.com/Scores">Scores</a></li>
+												<%--<li><a href="http://carrom.jhalak.com/Grounds">Grounds</a></li>--%>
+												<li><a href="http://carrom.jhalak.com/Photo-Gallery">Gallery</a></li>
+											</ul>
+										</li>
+										<li class="col-sm-2">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://pingpong.jhalak.com" target="_blank">Ping Pong</a></li>
+												<%--  <li><a href="http://pingpong.jhalak.com/">Home</a></li>--%>
+
+												<li><a href="http://pingpong.jhalak.com/Players">Players</a></li>
+												<li><a href="http://pingpong.jhalak.com/Schedules">Schedules</a></li>
+												<li><a href="http://pingpong.jhalak.com/Scores">Scores</a></li>
+											</ul>
+										</li>
+
+
+
+									</ul>
+
+
+								</li>
+
+							</ul>
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Real Estate </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://realestate.jhalak.com" target="_blank">Real Estate</a></li>
+												<%--     <li><a href="http://realestate.jhalak.com/Residential-Sell-List.aspx"> Residential Properties for Sale</a></li>--%>
+												<li><a href="http://realestate.jhalak.com/Residential-Sell-List.aspx">Residential Properties for Sale</a></li>
+												<li><a href="http://realestate.jhalak.com/Commercial-Sell-List.aspx">Commercial Properties For Sale</a></li>
+												<li><a href="http://realestate.jhalak.com/Rent-MySpace-List.aspx">Residential Properties for Lease</a></li>
+
+											</ul>
+										</li>
+										<li class="col-sm-3">
+											<ul>
+												<li><a href="http://realestate.jhalak.com/Rent-My-Commercial-Space-List.aspx">Commercial Properties for Lease</a></li>
+												<li><a href="http://realestate.jhalak.com/Agents-List.aspx">RealEstate Agents</a></li>
+												<li><a href="http://realestate.jhalak.com/Mortgage-List.aspx">Mortgage</a></li>
+												<li><a href="http://realestate.jhalak.com/HIS-List.aspx">Home Improvements</a></li>
+											</ul>
+										</li>
+
+										<%--<li class="col-sm-3">
+                                                    <ul>
+                                                        <li class="dropdown-header heading_menus"><a href="#">Recent Listing</a></li>
+                                                        <li class="dropdown-header  heading_menus"><a href="#">Agents</a></li>
+                                                        <li class="dropdown-header">Rental-USA</li>
+
+                                                        <li><a href="#">Apartments</a></li>
+                                                        <li><a href="#">House</a></li>
+                                                        <li><a href="#">Office</a></li>
+                                                        <li><a href="#">Commercial Space</a></li>
+                                                        <li><a href="#">Office Sharing</a></li>
+                                                        <li><a href="">More ...</a></li>
+
+                                                        <li class="dropdown-header">USA Listings</li>
+                                                        <li><a href="#">Single Family House</a></li>
+                                                        <li><a href="#">Condominium</a></li>
+                                                        <li><a href="#">Town House</a></li>
+                                                        <li><a href="#">Mixed House</a></li>
+                                                        <li><a href="#">Loft</a></li>
+                                                        <li><a href="#">Co-Op</a></li>
+
+
+
+
+
+
+
+
+
+                                                    </ul>
+                                                </li>
+
+                                                <li class="col-sm-3">
+                                                    <ul>
+                                                        <li><a href="#">Duplex</a></li>
+                                                        <li><a href="#">Triplex</a></li>
+                                                        <li><a href="#">Fourplex</a></li>
+                                                        <li><a href="#">Mobile Home</a></li>
+                                                        <li><a href="#">Multifamily</a></li>
+                                                        <li><a href="#">Commercial</a></li>
+
+                                                        <li class="dropdown-header">Real Estate Services </li>
+                                                        <li><a href="#">Real Estate Agents</a></li>
+                                                        <li><a href="#">Home improvement Services</a></li>
+                                                        <li><a href="#">Mortgage & Loans</a></li>
+
+                                                        <li class="dropdown-header">Indian Listings</li>
+                                                        <li><a href="#">Office Space</a></li>
+                                                        <li><a href="#">Showroom</a></li>
+                                                        <li><a href="#">Factory</a></li>
+                                                        <li><a href="#">Warehouse</a></li>
+                                                        <li><a href="#">IT-Park Office Space</a></li>
+
+
+
+
+                                                    </ul>
+                                                </li>
+                                                <li class="col-sm-3">
+
+                                                    <ul>
+                                                        <li><a href="#">Hotel & Resorts</a></li>
+                                                        <li><a href="#">Guest House </a></li>
+                                                        <li><a href="#">Banquet Hall</a></li>
+                                                        <li><a href="#">Retail Mall Space</a></li>
+                                                        <li><a href="#">Business Park</a></li>
+                                                        <li><a href="#">Business Centre</a></li>
+                                                        <li><a href="#">Manufacturing</a></li>
+                                                        <li><a href="#">Cold Storage</a></li>
+                                                        <li><a href="#">Time Share</a></li>
+                                                        <li><a href="#">Shops</a></li>
+                                                        <li><a href="#">Residential Apartment</a></li>
+                                                        <li><a href="#">House & Villa</a></li>
+                                                        <li><a href="#">Builder floor</a></li>
+                                                        <li><a href="#">Farmhouse</a></li>
+                                                        <li><a href="#">Studio Apartments</a></li>
+                                                        <li><a href="#">Service Apartment</a></li>
+
+
+
+                                                    </ul>
+
+
+                                                </li>
+                                                <li class="col-lg-3">
+                                                    <ul>
+                                                        <li class="dropdown-header">Home Improvements</li>
+                                                        <li><a href="#">Interiors and Architects</a></li>
+                                                        <li><a href="#">Landscaping</a></li>
+                                                        <li><a href="#">Gardening</a></li>
+                                                        <li><a href="#">Remodeling</a></li>
+                                                        <li><a href="#">Security Systems</a></li>
+                                                        <li><a href="#">Pest & Terminate Control</a></li>
+                                                        <li><a href="#">Home Inspections</a></li>
+                                                        <li><a href="#">Cable</a></li>
+                                                        <li><a href="#">Satellites & TV Services</a></li>
+
+                                                    </ul>
+
+                                                </li>--%>
+									</ul>
+								</li>
+							</ul>
+
+
+
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Communities </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://communities.jhalak.com" target="_blank">Communities & Charity Organizations</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=101&CId=16">Religious Organizations</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=102&CId=16">Spiritual Centres</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=103&CId=16">Women & Child Welfare</a></li>
+
+											</ul>
+										</li>
+										<li class="col-sm-3">
+											<ul>
+
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=104&CId=16">Family & Community Centres</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=105&CId=16">Volunteer Organizations</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=106&CId=16">Cultural Development Organizations</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=108&CId=16">Health & Social Awareness Camps</a></li>
+
+											</ul>
+										</li>
+										<li class="col-sm-3">
+											<ul>
+
+
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=110&CId=16">Temples</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=107&CId=16">Regional Organizations & Associations</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=109&CId=16">Tourist Guidelines & Legal Communities</a></li>
+											</ul>
+										</li>
+										<li class="col-sm-3">
+											<ul>
+
+
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=254&CId=16">Mosques</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=255&CId=16">Churches</a></li>
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=256&CId=16">Gurudwara</a></li>
+											</ul>
+										</li>
+
+										<li class="col-sm-3">
+											<ul>
+
+
+												<li><a href="http://communities.jhalak.com/Ads-List.aspx?SId=257&CId=16">Other Communities</a></li>
+												<li class="dropdown-header  main-menu-link">National Organizations</li>
+
+											</ul>
+										</li>
+										<li class="col-sm-3"></li>
+									</ul>
+								</li>
+							</ul>
+
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Tours & Travels </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://travels.jhalak.com" target="_blank">Tours and Travels</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=3&CId=2">Pickups</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=5&CId=2">Limousine Services</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=6&CId=2">Tour Operators</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=7&CId=2">Ticketing Agents</a></li>
+												<li><a href="http://travels.jhalak.com/Companion-List.aspx?SId=8&CId=2">Travel Companion</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=9&CId=2">Traveller Immunization</a></li>
+												<li><a href="http://travels.jhalak.com/Ads-List.aspx?SId=10&CId=2">Travel Insurance</a></li>
+												<li><a href="http://www.travels.jhalak.com/Ads-List.aspx?SId=11&CId=2">Airfare Deals (USA/India)</a></li>
+												<li><a href="http://www.travels.jhalak.com/Ads-List.aspx?SId=190&CId=2">Travel & Vacations</a></li>
+											</ul>
+										</li>
+
+
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header main-menu-link"><a href="http://transport.jhalak.com" target="_blank">Transport Services</a></li>
+												<li><a href="http://transport.jhalak.com/Ads-List.aspx?SId=12&CId=3">Cargo Freight</a></li>
+												<li><a href="http://transport.jhalak.com/Ads-List.aspx?SId=13&CId=3">Movers & Packers</a></li>
+												<li><a href="http://transport.jhalak.com/Ads-List.aspx?SId=14&CId=3">Relocation Services</a></li>
+												<li><a href="http://transport.jhalak.com/Ads-List.aspx?SId=15&CId=3">Shipping Services</a></li>
+												<li><a href="http://transport.jhalak.com/Ads-List.aspx?SId=196&CId=3">Hire Vehicle</a></li>
+
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="http://coupons.jhalak.com" class="dropdown-toggle" data-toggle="dropdown">Coupons </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://coupons.jhalak.com" target="_blank">Coupons</a></li>
+												<li><a href="http://coupons.jhalak.com/Coupons">Coupons</a></li>
+												<li><a href="http://coupons.jhalak.com/Deals">Active Deals</a></li>
+												<li><a href="http://coupons.jhalak.com/Stores">Stores</a></li>
+												<li><a href="http://coupons.jhalak.com/Categories">Categories</a></li>
+												<%--  <li><a href="http://coupons.jhalak.com/Business-Holders-List.aspx">Business Holders</a></li>--%>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+
+
+
+							<ul class="nav navbar-nav">
+								<li class="dropdown mega-dropdown"><a href="#" class="dropdown-toggle cls-Red" data-toggle="dropdown">Entertainment </a>
+									<ul class="dropdown-menu mega-dropdown-menu row">
+										<li class="col-sm-3">
+											<ul>
+												<li class="dropdown-header  main-menu-link"><a href="http://entertainment.jhalak.com" target="_blank">Entertainment</a></li>
+												<li><a href="http://entertainment.jhalak.com/Jhalak-Movie-Ratings">Movie Ratings/Review</a></li>
+												<li><a href="http://entertainment.jhalak.com/Theaters-List.aspx">Movie Show Timings</a></li>
+												<li><a href="http://entertainment.jhalak.com/Jhalak-Celebrities">Celebrities</a></li>
+												<li><a href="http://entertainment.jhalak.com/Jhalak-Gossips">Gossips</a></li>
+												<li><a href="http://entertainment.jhalak.com/Jhalak-AmbientLight">Ambient Light</a></li>
+												<li><a href="http://entertainment.jhalak.com/Jhalak-FunnyChamber">Funny Chamber</a></li>
+											</ul>
+											<li class="col-sm-3">
+												<ul>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-Angels">Angel View</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-RedCarpet">Red Carpet</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-MediaHub">Media Hub</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-It">Jhalak It</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-TVShows">Tv Corner</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-News">Articles</a></li>
+													<li><a href="http://entertainment.jhalak.com/Jhalak-PhotoGallery">Photo Gallery</a></li>
+
+												</ul>
+											</li>
+
+									</ul>
+								</li>
+							</ul>
+
+
+
+
+
+
+						</div>
+						<script type="text/javascript">
+						    $(document).ready(function () {
+						        var touch = $('.navbar-toggle');
+						        var menu = $('.navbar-collapse');
+
+						        $(touch).on('click', function (e) {
+						            e.preventDefault();
+						            menu.slideToggle();
+						        });
+
+						        $(window).resize(function () {
+						            var w = $(window).width();
+						            if (w > 768 && menu.is(':hidden')) {
+						                menu.removeAttr('style');
+						            }
+						        });
+
+						    });
+						</script>
+						<script type="text/javascript">
+						    $(function () {
+						        $(".dropdown").onClick(
+								function () {
+								    $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+								    $(this).toggleClass('open');
+								    $('b', this).toggleClass("caret caret-up");
+								},
+								function () {
+								    $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+								    $(this).toggleClass('open');
+								    $('b', this).toggleClass("caret caret-up");
+								});
+						    });
+						</script>
+
+
+					</nav>
+
+				</div>
+
+                    </div>
+                    <div class="row">
+
+
+                        <div id="JHKClass" class="carousel slide" data-ride="carousel">
+
+
+                            <div class="carousel-inner" role="listbox">
+                               <%-- <div class="item active">
+
+                                    <img alt="" src="../images/classifieds01.jpg">
+                                </div>--%>
+                                <div class="item active">
+
+                                    <img alt="" src="../images/classifieds02.jpg">
+                                </div>
+                              <%--  <div class="item ">
+
+                                    <img alt="" src="../images/classifieds03.jpg">
+                                </div>--%>
+                                <div class="item ">
+
+                                    <img alt="" src="../images/classifieds04.jpg">
+                                </div>
+
+                            </div>
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#JHKClass" role="button" data-slide="prev"><span
+                                class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span> </a><a class="right carousel-control" href="#JHKClass" role="button"
+                                    data-slide="next"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span> </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 row">
+                        <div class="realestate-srch txtcenter">
+                            <h1 style="color: orange"><b>EASY WAY TO FIND THE
+                       
+                        RIGHT SERVICE EXPERTS</b></h1>
+
+
+                        </div>
+                    </div>
+                    <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+                    <script src="js/slick.js" type="text/javascript" charset="utf-8"></script>
+                    <script type="text/javascript">
+                                    $(document).on('ready', function () {
+
+                                        $(".variable").slick({
+                                            dots: true,
+                                            infinite: true,
+                                            variableWidth: true,
+                                            slidesToShow: 4,
+                                            slidesToScroll: 1,
+                                            autoplay: true
+                                        });
+                                    });
+
+
+
+                    </script>
+
+
+                    <div class="row">
+
+
+
+                        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </div>
+
+                    <div class="row tournment-footer">
+				<%--<div class="col-sm-12 footer-border padding-bottom">
+					<h4>Tax Services</h4>
+					<div class="col-sm-2"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="Ads-List.aspx?SId=166&CId=20">Certified Public Accountants</a></div>
+					<div class="col-sm-2"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="Ads-List.aspx?SId=167&CId=20">Tax Consultants</a></div>
+
+
+				</div>--%>
+				<div class=" col-sm-12">
+					<h4>Other Links</h4>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+							<li>
+								<%--<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://roommates.jhalak.com">Rommates and Sharings</a>--%>
+                            </li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://travels.jhalak.com" target="_blank">Tours and Travels</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://transport.jhalak.com" target="_blank">Transport Services</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://flipflop.jhalak.com" target="_blank">Flip-Flop</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://business.jhalak.com" target="_blank">Business Opportunities</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://fitness.jhalak.com" target="_blank">Beauty and Fitness</a></li>
+							<li>
+								<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://shopping.jhalak.com" target="_blank">Stores and Malls</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://healthcare.jhalak.com" target="_blank">Health Care and Doctors</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://domestic.jhalak.com" target="_blank">Domestic Services</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://automobile.jhalak.com" target="_blank">Automibiles</a></li>
+							<li>
+								<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://services.jhalak.com" target="_blank">Business Services</a>
+							</li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://rituals.jhalak.com" target="_blank">Ritual Services</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://repairs.jhalak.com" target="_blank">Repairs</a> </li>
+						</ul>
+					</div>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://communities.jhalak.com" target="_blank">Communities</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://pets.jhalak.com" target="_blank">Pet Services</a></li>
+							<li>
+								<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://www.investandinsure.jhalak.com" target="_blank">Invest and insure</a>
+							</li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://attorney.jhalak.com" target="_blank">Legal and Immigration Services</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://taxservices.jhalak.com" target="_blank">CPA and Tax Services</a></li>
+						</ul>
+					</div>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+
+
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://www.party.jhalak.com " target="_blank">Party Services</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://astrology.jhalak.com" target="_blank">Astrology Services</a></li>
+							<%--  <li>
+                                <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://entertainment.jhalak.com" target="_blank">Entertainments</a>
+                            </li>--%>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://trainings.jhalak.com" target="_blank">Trainings</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://eatstreet.jhalak.com" target="_blank">Eat Street</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://coupons.jhalak.com" target="_blank">Coupons</a></li>
+						</ul>
+					</div>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://realestate.jhalak.com" target="_blank">Real Estate</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://jobs.jhalak.com" target="_blank">Jobs</a></li>
+							<li>
+								<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://tournaments.jhalak.com" target="_blank">Tournaments</a>
+							</li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://cricket.jhalak.com" target="_blank">Cricket</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://volleyball.jhalak.com" target="_blank">Volley Ball</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://tennis.jhalak.com" target="_blank">Tennis</a></li>
+						</ul>
+					</div>
+					<div class="col-sm-2 col-xs-12">
+						<ul>
+
+
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://badminton.jhalak.com" target="_blank">Badminton</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://pingpong.jhalak.com" target="_blank">PingPong</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://chess.jhalak.com" target="_blank">Chess</a></li>
+							<li><i class="fa fa-chevron-circle-right" aria-hidden="true"></i>&nbsp;<a href="http://carrom.jhalak.com" target="_blank">Carroms</a></li>
+
+						</ul>
+					</div>
+
+				</div>
+				<div class="col-sm-12 jhk-cpy">
+					<div class="soc-icon">
+
+						<ul>
+							<li><b>follow us on:</b></li>
+							<li>
+								<a href="https://www.facebook.com/Jhalakcom-428270054025360/" target="_blank">
+									<img alt="fb" src="<%=this.ResolveUrl("images/fb-icon.png")%>"></a></li>
+							<li>
+								<a href="https://twitter.com/JhalakPortal" target="_blank">
+									<img alt="twitter" src="<%=this.ResolveUrl("images/tw-icon.png")%>"></a></li>
+							<li>
+								<a href="https://plus.google.com/+JhalakcomCumming" target="_blank">
+									<img alt="google" src="<%=this.ResolveUrl("images/g-icon.png")%>"></a></li>
+							<li>
+								<a href="https://www.youtube.com/channel/UCDk6DhXKMR6gje_jJnuPy0A" target="_blank">
+									<img alt="youtube" src="<%=this.ResolveUrl("images/yt-icon.png")%>"></a></li>
+						</ul>
+					</div>
+					© 2017 Copyright Jhalak.com | All Rights Reserved.
+               
+				</div>
+			</div>
+                    <a href="#" class="scrollToTop"></a>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+    </form>
+</body>
+</html>
