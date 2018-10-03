@@ -1,0 +1,807 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+/// <summary>
+/// Summary description for RecipeCls
+/// </summary>
+public class EatStreetCls
+{
+    DcClassifiedsDataContext dbEmup=new DcClassifiedsDataContext();
+    public EatStreetCls()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
+
+    public IQueryable GetCocktailRecipe(string strUserId)
+    {
+        var objRecipe = from objR in dbEmup.R_Cocktail_Recipes
+                        //where objR.UserAdsDet.UserEmailId == Convert.ToString(strUserId)
+                        orderby objR.Title ascending
+                        select new
+                        {
+                            Id = objR.CocketailRecipeId,
+                            Title = objR.Title,
+                            Glass = objR.R_Glass_Type.Name
+
+                        };
+        return objRecipe;
+
+    }
+ 
+
+
+    public IQueryable GetCocktailRecipe()
+    {
+        var objRecipe = from objR in dbEmup.R_Cocktail_Recipes
+
+                        orderby objR.Title ascending
+                        select new
+                        {
+                            Id = objR.CocketailRecipeId,
+                            Title = "<b> <font size='4'>" + objR.Title + "</font></b>" + "<br/> " + " <span class='glyphicon glyphicon-glass'> </span>  " + objR.R_Glass_Type.Name + "<br/> " + "<div class='item-desc'><span class='glyphicon glyphicon-file'> </span> " + objR.Garnish + "</div>" + "<div class='item-desc'><span class='glyphicon glyphicon-list-alt'> </span> " + objR.Ingredients + "</div>" + "<div class='item-desc'><span class='glyphicon glyphicon-book'> </span> " + objR.Method + "</div>",
+
+
+                        };
+        return objRecipe;
+
+    }
+
+    public IQueryable GetRecipe(string strUserId)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.UserId == Convert.ToString(strUserId)
+                        orderby objR.R_Recipe_Category.CategoryName ascending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = objR.RecipeTitle,
+                            Type = objR.R_Recipe_Type.RecipeTypeName,
+                            Category = objR.R_Recipe_Category.CategoryName
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipe(int intRecipeType)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.RecipeType == intRecipeType
+                        orderby objR.R_Recipe_Category.CategoryName ascending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = objR.RecipeTitle,
+                            Type = objR.R_Recipe_Type.RecipeTypeName,
+                            Category = objR.R_Recipe_Category.CategoryName
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipe()
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        orderby objR.R_Recipe_Category.CategoryName ascending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = objR.RecipeTitle,
+                            Type = objR.R_Recipe_Type.RecipeTypeName,
+                            Category = objR.R_Recipe_Category.CategoryName
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipeCategoryWise()
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        orderby objR.R_Recipe_Category.CategoryName ascending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = objR.RecipeTitle,
+                            Type = objR.R_Recipe_Type.RecipeTypeName,
+                            Category = objR.R_Recipe_Category.CategoryName
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipeCategoryWise(int intCategory)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.RecipeCategoryId == intCategory
+                        orderby objR.CreatedDate descending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = "<b> <font size='4'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-cutlery'> </span> " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "<span class='glyphicon glyphicon-file'> </span> " + objR.Instructions.Substring(0, 300),
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipeTypeWise(int intType)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.RecipeType == intType
+                        orderby objR.CreatedDate descending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = "<b> <font size='4'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + " <span class='glyphicon glyphicon-cutlery'> </span>  " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "<div class='item-desc'><span class='glyphicon glyphicon-file'> </span> " + objR.Instructions.Substring(0, 300) + "</div>",
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipeNonVeg(int intId)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.NonVegId == intId
+                        orderby objR.CreatedDate descending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = "<b> <font size='4'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + " <span class='glyphicon glyphicon-cutlery'> </span>  " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "<div class='item-desc'><span class='glyphicon glyphicon-file'> </span> " + objR.Instructions.Substring(0, 300) + "</div>",
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetRecipe(int intRecipeType, string strUserId)
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.UserId == Convert.ToString(strUserId) &&
+                        objR.RecipeType == intRecipeType
+                        orderby objR.R_Recipe_Category.CategoryName ascending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = objR.RecipeTitle,
+                            Type = objR.R_Recipe_Type.RecipeTypeName,
+                            Category = objR.R_Recipe_Category.CategoryName
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetVegan()
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.VegNonVeg == "Veg"
+                        orderby objR.CreatedDate descending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = "<b> <font size='2'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-cutlery'> </span> " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "  <span class='glyphicon glyphicon-globe'> </span>  " + objR.R_Recipe_Category.CategoryName,
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetGlassTypes()
+    {
+        var objRecipe = from objR in dbEmup.R_Glass_Types
+                        
+                        orderby objR.Name ascending
+                        select new
+                        {
+                            Value = objR.GlassId,
+                            Text = objR.Name
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetStoreTypes()
+    {
+        var objRecipe = from objR in dbEmup.R_Store_Types
+
+                        orderby objR.StoreType ascending
+                        select new
+                        {
+                            Value = objR.StoreTypeId,
+                            Text = objR.StoreType
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetBaseSpirits()
+    {
+        var objRecipe = from objR in dbEmup.R_Base_Spirit_Types
+
+                        orderby objR.SpiritName ascending
+                        select new
+                        {
+                            Value = objR.SpiritId,
+                            Text = objR.SpiritName
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetCocktailThemes()
+    {
+        var objRecipe = from objR in dbEmup.R_Theme_Types
+
+                        orderby objR.ThemeName ascending
+                        select new
+                        {
+                            Value = objR.ThemeId,
+                            Text = objR.ThemeName
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetCocktailFlavors()
+    {
+        var objRecipe = from objR in dbEmup.R_Flavor_Types
+
+                        orderby objR.FlavorName ascending
+                        select new
+                        {
+                            Value = objR.FlavorId,
+                            Text = objR.FlavorName
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetCocktailTypes()
+    {
+        var objRecipe = from objR in dbEmup.R_Cocktail_Types
+
+                        orderby objR.Type ascending
+                        select new
+                        {
+                            Value = objR.CocktailTypeId,
+                            Text = objR.Type
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable getRecipeType()
+    {
+
+        var objRecipetype = from objType in dbEmup.R_Recipe_Types
+                            orderby objType.RecipeTypeName ascending
+                            select new
+
+                            {
+                                Text = objType.RecipeTypeName,
+                                Value = objType.RecipeTypeId
+                            };
+
+        return objRecipetype;
+
+
+    }
+    public IQueryable getRecipeCategory()
+    {
+
+        var objRecipeCategory = from objType in dbEmup.R_Recipe_Categories
+                                orderby objType.CategoryName ascending
+                                select new
+
+                                {
+                                    Text = objType.CategoryName,
+                                    Value = objType.RecipeCategoryId
+                                };
+
+        return objRecipeCategory;
+
+
+    }
+    public IQueryable getNonVegTypes()
+    {
+
+        var objNonList = from objN in dbEmup.R_Non_Veg_Types
+                         orderby objN.Name ascending
+                         select new
+                         {
+                             value = objN.Non_Veg_Id,
+                             text = objN.Name
+                         };
+
+        return objNonList;
+
+
+
+    }
+
+    public IQueryable GetVeganHome()
+    {
+        var objRecipe = (from objR in dbEmup.R_User_Recipes
+                         where objR.VegNonVeg == "Veg"
+                         orderby objR.CreatedDate descending
+                         select new
+                         {
+                             Id = objR.UserRecipeId,
+                             Title = "<b> <font size='2'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-cutlery'> </span> " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "  <span class='glyphicon glyphicon-globe'> </span>  " + objR.R_Recipe_Category.CategoryName,
+
+
+
+                         }).Take(5);
+        return objRecipe;
+
+    }
+
+    public IQueryable GetNonVegan()
+    {
+        var objRecipe = from objR in dbEmup.R_User_Recipes
+                        where objR.VegNonVeg == "NonVeg"
+                        orderby objR.CreatedDate descending
+                        select new
+                        {
+                            Id = objR.UserRecipeId,
+                            Title = "<b> <font size='2'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-cutlery'> </span> " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "  <span class='glyphicon glyphicon-globe'> </span>  " + objR.R_Recipe_Category.CategoryName,
+
+
+
+                        };
+        return objRecipe;
+
+    }
+
+
+
+    public IQueryable GetNonVeganHome()
+    {
+        var objRecipe = (from objR in dbEmup.R_User_Recipes
+                         where objR.VegNonVeg == "NonVeg"
+                         orderby objR.CreatedDate descending
+                         select new
+                         {
+                             Id = objR.UserRecipeId,
+                             Title = "<b> <font size='2'>" + objR.RecipeTitle + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-cutlery'> </span> " + objR.R_Recipe_Type.RecipeTypeName + "<br/> " + "  <span class='glyphicon glyphicon-globe'> </span>  " + objR.R_Recipe_Category.CategoryName,
+
+
+
+                         }).Take(5);
+        return objRecipe;
+
+    }
+
+
+    public IQueryable GetCocktailUser(string strUserId)
+    {
+        var objRecipe = from objR in dbEmup.R_Cocktail_Recipes
+                        //where objR.UserAdsDet.UserEmailId == Convert.ToString(strUserId)
+                        orderby objR.CocketailRecipeId descending
+                        select new
+                        {
+                            Id = objR.CocketailRecipeId,
+                            Title = objR.Title
+
+
+                        };
+        return objRecipe;
+
+    }
+
+
+
+    public IQueryable GetUserRecipe(string strEmailId)
+    {
+        var objH = from objR in dbEmup.R_User_Recipes
+                   where objR.UserId == strEmailId
+                   orderby objR.UserRecipeId descending
+                   select new
+                   {
+                       Id = objR.UserRecipeId,
+
+                       Title = objR.RecipeTitle
+                       //ChefName = objR.ChefName,
+                       //VegNonVeg = objR.VegNonVeg,
+                       //RecipeType = objR.R_Recipe_Type.RecipeTypeName,
+                       //Category = objR.R_Recipe_Category.CategoryName,
+                       //Ingredients = objR.Ingredients,
+
+                   };
+
+        return objH;
+
+
+    }
+
+
+  
+
+    public IQueryable getOtherCuisine()
+    {
+        var objRecipe = from objR in dbEmup.R_Other_Recipe_Types
+
+                        orderby objR.Name ascending
+                        select new
+                        {
+                            Value = objR.OtherId,
+                            Text = objR.Name
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable getIndianCuisine()
+    {
+        var objRecipe = from objR in dbEmup.R_Indian_Cuisine_Types
+
+                        orderby objR.CuisineType ascending
+                        select new
+                        {
+                            Value = objR.CuisineTypeId,
+                            Text = objR.CuisineType
+
+
+
+                        };
+        return objRecipe;
+
+    }
+    public IQueryable GetStores()
+    {
+        var objStore = (from objR in dbEmup.R_Food_Stores
+                       orderby objR.AdId descending
+                       select new
+                       {
+                           Adid=objR.UserAdsDet.UserAdId,
+                           Id = objR.FoodStoreId,
+                           Store = "<b> <font size='2'>" + objR.StoreName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+
+
+                       }).Take(1);
+        return objStore;
+
+    }
+
+    public IQueryable GetAdsGrocery(int intCatId, int intSubCateId, int startZip, int endZip,string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.R_Food_Stores
+                    where objG.UserAdsDet.CategoryId == intCatId && objG.UserAdsDet.SubCategoryId == intSubCateId && objG.UserAdsDet.Status == null 
+                 && (Convert.ToInt32(objG.UserAdsDet.ZipCode) >= startZip && Convert.ToInt32(objG.UserAdsDet.ZipCode) <= endZip)
+                    && objG.UserAdsDet.CreatedDate > timeGap && objG.UserAdsDet.AdType==adtype
+                    orderby objG.UserAdsDet.UserAdId descending
+                    select new
+                    {
+                        Adid = objG.UserAdsDet.UserAdId,
+                        Id = objG.FoodStoreId,
+                        //AdId = objG.UserAdsDet.UserAdId,
+                        SubcategoryId = objG.UserAdsDet.SubCategoryId,
+                        AdTitle = objG.UserAdsDet.AdTitle,
+                        Category = objG.UserAdsDet.CategoryDet.Categoryname,
+                        SubCategory = objG.UserAdsDet.SubCategoryDet.SubCategory,
+                        CategoryId = objG.UserAdsDet.CategoryId,
+                        address = objG.UserAdsDet.City,
+                        Store = "<b> <font size='2'>" + objG.StoreName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objG.UserAdsDet.Location + "<br/> ",
+                        Name = objG.UserDet.Name,
+                         ImageURl = objG.UserAdsDet.ImageUrl != null ? objG.UserAdsDet.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png"
+                    }).Take(100);
+
+        return objA;
+    }
+
+    public IQueryable GetAdsGrocery(int intCatId, int intSubCateId, string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.R_Food_Stores
+                    where objG.UserAdsDet.CategoryId == intCatId && objG.UserAdsDet.SubCategoryId == intSubCateId && objG.UserAdsDet.Status == null
+                
+                    && objG.UserAdsDet.CreatedDate > timeGap
+                    orderby objG.UserAdsDet.UserAdId descending
+                    select new
+                    {
+                        Adid = objG.UserAdsDet.UserAdId,
+                        Id = objG.FoodStoreId,
+                        //AdId = objG.UserAdsDet.UserAdId,
+                        SubcategoryId = objG.UserAdsDet.SubCategoryId,
+                        AdTitle = objG.UserAdsDet.AdTitle,
+                        Category = objG.UserAdsDet.CategoryDet.Categoryname,
+                        SubCategory = objG.UserAdsDet.SubCategoryDet.SubCategory,
+                        CategoryId = objG.UserAdsDet.CategoryId,
+                        address = objG.UserAdsDet.City,
+                        Store = "<b> <font size='2'>" + objG.StoreName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objG.UserAdsDet.Location + "<br/> ",
+                        Name = objG.UserDet.Name,
+                         ImageURl = objG.UserAdsDet.ImageUrl != null ? objG.UserAdsDet.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png",
+                         Location=objG.UserAdsDet.Location,
+                    }).Take(1);
+
+        return objA;
+    }
+
+    public IQueryable GetStores(int intCatId, int intSubCateId, string strLocation)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+        timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.R_Food_Stores
+                    where objG.UserAdsDet.CategoryId == intCatId && objG.UserAdsDet.SubCategoryId == intSubCateId && objG.UserAdsDet.Status == null
+                  && objG.UserAdsDet.City.Contains(strLocation)
+                    && objG.UserAdsDet.CreatedDate > timeGap
+                    orderby objG.UserAdsDet.UserAdId descending
+                    select new
+                    {
+                        Adid = objG.UserAdsDet.UserAdId,
+                        Id = objG.FoodStoreId,
+                        //AdId = objG.UserAdsDet.UserAdId,
+                        SubcategoryId = objG.UserAdsDet.SubCategoryId,
+                        AdTitle = objG.UserAdsDet.AdTitle,
+                        Category = objG.UserAdsDet.CategoryDet.Categoryname,
+                        SubCategory = objG.UserAdsDet.SubCategoryDet.SubCategory,
+                        CategoryId = objG.UserAdsDet.CategoryId,
+                        address = objG.UserAdsDet.City,
+                        Store = "<b> <font size='2'>" + objG.StoreName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objG.UserAdsDet.Location + "<br/> ",
+                        Name = objG.UserDet.Name,
+                         ImageURl = objG.UserAdsDet.ImageUrl != null ? objG.UserAdsDet.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png"
+                    }).Take(100);
+
+        return objA;
+    }
+    //public IQueryable GetIndianRestaurants()
+    //{
+    //    var objStore = (from objR in dbEmup.R_Hotel_Manager_Creates
+    //                    orderby objR.AdId descending
+    //                    select new
+    //                    {
+    //                        Adid = objR.UserAdsDet.UserAdId,
+    //                        Id = objR.HotelId,
+    //                        Hotel = "<b> <font size='2'>" + objR.HotelName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+
+
+    //                    }).Take(1);
+    //    return objStore;
+
+    //}
+
+    //public IQueryable GetIndianRestaurants()
+    //{
+    //    var objStore = (from objG in dbEmup.UserAdsDets
+    //                    where objG.CategoryId == intCatId && objG.SubCategoryId == intSubCateId
+    //                   && objG.Status == null && objG.CreatedDate > timeGap
+    //                   && (Convert.ToInt32(objG.ZipCode) >= startZip && Convert.ToInt32(objG.ZipCode) <= endZip)
+    //                orderby objG.UserAdId descending
+    //                select new
+                     
+    //                    select new
+    //                    {
+    //                        Adid = objR.UserAdsDet.UserAdId,
+    //                        Id = objR.HotelId,
+    //                        Hotel = "<b> <font size='2'>" + objR.HotelName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+
+
+    //                    }).Take(1);
+    //    return objStore;
+
+    //}
+
+
+    public IQueryable GetIndianRes(int intCatId, int intSubCateId, int startZip, int endZip,string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.UserAdsDets
+                    where objG.CategoryId == intCatId && objG.SubCategoryId == intSubCateId
+                  && objG.Status == null && objG.CreatedDate > timeGap && objG.AdType==adtype
+                    && (Convert.ToInt32(objG.ZipCode) >= startZip && Convert.ToInt32(objG.ZipCode) <= endZip)
+                    orderby objG.UserAdId descending
+                    select new
+                    {
+                        //Adid = objG.UserAdId,
+                        //Id = objG..HotelId,
+                        //Hotel = "<b> <font size='2'>" + objG..HotelName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+                        AdId = objG.UserAdId,
+                        SubcategoryId = objG.SubCategoryId,
+                        AdTitle = objG.AdTitle,
+                        Category = objG.CategoryDet.Categoryname,
+                        SubCategory = objG.SubCategoryDet.SubCategory,
+                        CategoryId = objG.CategoryId,
+                        address = objG.City,
+                        City = objG.City,
+                        ImageURl = objG.ImageUrl != null ? objG.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png"
+                    }).Take(1);
+
+        return objA;
+    }
+    public IQueryable GetIndianRes(int intCatId, int intSubCateId,  string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.UserAdsDets
+                    where objG.CategoryId == intCatId && objG.SubCategoryId == intSubCateId
+                  && objG.Status == null && objG.CreatedDate > timeGap && objG.AdType==adtype
+                   
+                    orderby objG.UserAdId descending
+                    select new
+                    {
+                        AdId = objG.UserAdId,
+                        SubcategoryId = objG.SubCategoryId,
+                        AdTitle = objG.AdTitle,
+                        Category = objG.CategoryDet.Categoryname,
+                        SubCategory = objG.SubCategoryDet.SubCategory,
+                        CategoryId = objG.CategoryId,
+                        address = objG.City,
+                        City = objG.City,
+                        Location=objG.Location,
+                        ImageURl = objG.ImageUrl != null ? objG.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png"
+                    }).Take(1);
+
+        return objA;
+    }
+
+
+    public IQueryable GetCooking(int intCatId, int intSubCateId, int startZip, int endZip,string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.UserAdsDets
+                    where objG.CategoryId == intCatId && objG.SubCategoryId == intSubCateId
+                  && objG.Status == null && objG.CreatedDate > timeGap && objG.AdType==adtype
+                    && (Convert.ToInt32(objG.ZipCode) >= startZip && Convert.ToInt32(objG.ZipCode) <= endZip)
+                    orderby objG.UserAdId descending
+                    select new
+                    {
+                        AdId = objG.UserAdId,
+                        SubcategoryId = objG.SubCategoryId,
+                        AcademyName = objG.AdTitle,
+                        Category = objG.CategoryDet.Categoryname,
+                        SubCategory = objG.SubCategoryDet.SubCategory,
+                        CategoryId = objG.CategoryId,
+                        address = objG.City,
+                        City = objG.City,
+                        ImageURl = objG.ImageUrl != null ? objG.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png"
+                    }).Take(100);
+
+        return objA;
+    }
+
+    public IQueryable GetCooking(int intCatId, int intSubCateId,  string adtype)
+    {
+        DateTime today = DateTime.Today;
+        DateTime timeGap;
+        //if (adtype == "Free")
+        //{
+            timeGap = today.AddDays(-13);
+        //}
+        //else
+        //{
+        //    timeGap = today.AddDays(-89);
+        //}
+
+        var objA = (from objG in dbEmup.UserAdsDets
+                    where objG.CategoryId == intCatId && objG.SubCategoryId == intSubCateId
+                  && objG.Status == null && objG.CreatedDate > timeGap && objG.AdType==adtype
+                   
+                    orderby objG.UserAdId descending
+                    select new
+                    {
+                        AdId = objG.UserAdId,
+                        AdTitle= objG.AdTitle,
+                        SubcategoryId = objG.SubCategoryId,
+                        AcademyName = objG.AdTitle,
+                        Category = objG.CategoryDet.Categoryname,
+                        SubCategory = objG.SubCategoryDet.SubCategory,
+                        CategoryId = objG.CategoryId,
+                        address = objG.City,
+                        City = objG.City,
+                        ImageURl = objG.ImageUrl != null ? objG.ImageUrl : "http://wwww.jhalak.com/images/Jhalak-Logo.png",
+                        Location=objG.Location,
+                    }).Take(1);
+
+        return objA;
+    }
+    public IQueryable GetIndianRestaurants(string strloc)
+    {
+        var objStore = (from objR in dbEmup.R_Hotel_Manager_Creates
+                        where objR.Address==strloc
+                        orderby objR.AdId descending
+                        select new
+                        {
+                            Adid = objR.UserAdsDet.UserAdId,
+                            Id = objR.HotelId,
+                            Hotel = "<b> <font size='2'>" + objR.HotelName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+
+
+                        }).Take(1);
+        return objStore;
+
+    }
+    public IQueryable GetStores(string loc)
+    {
+        var objStore = (from objR in dbEmup.R_Food_Stores where objR.UserAdsDet.Location==loc
+                        orderby objR.AdId descending
+                        select new
+                        {
+                            Adid = objR.UserAdsDet.UserAdId,
+                            Id = objR.FoodStoreId,
+                            Store = "<b> <font size='2'>" + objR.StoreName + "</font></b>" + "<br/> " + "<span class='glyphicon glyphicon-globe'> </span> " + objR.UserAdsDet.Location + "<br/> ",
+
+
+                        }).Take(1);
+        return objStore;
+
+    }
+
+}

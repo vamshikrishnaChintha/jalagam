@@ -1,0 +1,1345 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+using System.Configuration;
+using System.Net.Mail;
+using System.Text;
+using Amazon.SimpleEmail;
+using Amazon.SimpleEmail.Model;
+
+/// <summary>
+/// Summary description for MailServicesCls
+/// </summary>
+/// 
+public class MailServicesCls
+{
+    DcClassifiedsDataContext dbEmup = new DcClassifiedsDataContext();
+    public MailServicesCls()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
+
+    public void SendeMail(string strToMailId, string strSubject, string strBody)
+    {
+
+
+        try
+        {
+
+            MailFormat(strToMailId, strSubject, strBody);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+
+
+        }
+    }
+    //public void SendeMail(string strToMailId, string strSubject, string strMailBody)
+    //{
+    //    try
+    //    {
+    //        MailFormat(strToMailId, strSubject, strMailBody);
+
+    //    }
+
+    //    catch (SmtpException ex)
+    //    {
+    //        throw new ApplicationException
+    //          ("SmtpException has occured: " + ex.Message);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw ex;
+    //    }
+
+    //}
+    public bool PostAdConfirmation(string strUserName, string strAdTitle, string userId, Int16 intAdId)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = userId;
+
+
+        string SUBJECT = "Jhalak-:-  Ad Confirmation";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.PostAdConfirmation(strUserName,strAdTitle,userId,intAdId));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
+    public bool AdVisible(string strUserName, string strAdTitle,string emailId ,string userAdId,string date,string SId)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "Your Ad is now LIVE on Jhalak.com  "+userAdId;
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.AdVisibleAck(strUserName, strAdTitle,emailId, userAdId,date,SId));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
+    public bool RejectAd(string strUserName, string emailId)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "Your Ad Cannot be Published – Prohibited Content Detected";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.RejectAdAck(strUserName, emailId));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool RejectUser(string strUserName, string emailId)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "You are Rejected – Prohibited Details Detected";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.RejectUser(strUserName, emailId));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool VerifyUser(string strUserName, string emailId, string strURL)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "Verify User";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.VerifyUser(strUserName, emailId, strURL));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public void SendeMailResetPassword(string strToMailId, string strSubject, string UserName, string strResetLink)
+    {
+        try
+        {
+            var strBody = new StringBuilder();
+            strBody.AppendLine(UserName);
+            strBody.Append("," + "<br />");
+            strBody.AppendLine(" We have received your password reset request. This email contains the information that you need to change your password. <br />");
+            strBody.AppendLine("Your MailId  :" + strToMailId + " <br />");
+            strBody.AppendLine("You can login here " + strResetLink + " to change or reset password" + " <br />");
+            strBody.AppendLine("If you did not request that your password be reset, then you should send an email to support@sudimna.com as soon as possible to ensure the safety of your account. " + "<br />");
+            strBody.AppendLine("Best Regards, " + "<br />");
+            strBody.AppendLine("Sudimna Team" + "<br />");
+            strBody.AppendLine("Replies to this message are undeliverable. Please do not reply.");
+
+            SmtpClient mySmtpClient = new SmtpClient("smtpout.secureserver.net");
+
+
+            mySmtpClient.UseDefaultCredentials = false;
+            System.Net.NetworkCredential basicAuthenticationInfo = new
+               System.Net.NetworkCredential("jhalak.team@sudimna.com", "saibaba");
+            mySmtpClient.Credentials = basicAuthenticationInfo;
+
+
+            MailAddress from = new MailAddress("jhalak.team@sudimna.com", "Jhalak Team");
+            MailAddress to = new MailAddress(strToMailId);
+            MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
+
+            myMail.Subject = strSubject;
+            myMail.SubjectEncoding = System.Text.Encoding.UTF8;
+            myMail.Body = Convert.ToString(strBody);
+            myMail.BodyEncoding = System.Text.Encoding.UTF8;
+            myMail.IsBodyHtml = true;
+
+            mySmtpClient.Send(myMail);
+        }
+        catch (SmtpException ex)
+        {
+            throw new ApplicationException
+              ("SmtpException has occured: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+    }
+
+    
+    
+    private void MailFormat(string strToMailId, string strSubject, string strBody)
+    {
+        SmtpClient mySmtpClient = new SmtpClient("smtpout.secureserver.net");
+
+
+        mySmtpClient.UseDefaultCredentials = false;
+        System.Net.NetworkCredential basicAuthenticationInfo = new
+
+
+        System.Net.NetworkCredential("jhalak.team@sudimna.com", "saibaba");
+        mySmtpClient.Credentials = basicAuthenticationInfo;
+
+
+        MailAddress from = new MailAddress("jhalak.team@sudimna.com", "Jhalak Team");
+        MailAddress to = new MailAddress(strToMailId);
+        MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
+
+
+        //MailAddress replyto = new MailAddress("jhalak.sudimna@sudimna.com");
+        //myMail.ReplyTo = replyto;
+
+        // set subject and encoding
+        myMail.Subject = strSubject;
+        myMail.SubjectEncoding = System.Text.Encoding.UTF8;
+
+        // set body-message and encoding
+        myMail.Body = "<b>" + strBody + " </b><br />using <b>HTML</b>.";
+        myMail.BodyEncoding = System.Text.Encoding.UTF8;
+        // text or html
+        myMail.IsBodyHtml = true;
+        try
+        {
+            mySmtpClient.Send(myMail);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+
+    }
+    
+
+    class clsTeamMails
+    {
+        public string mailId { get; set; }
+        public int id { get; set; }
+
+
+    }
+
+
+    public bool BusinessEnquiry(string OwnerMailId, string ownerName, string strUserName)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = OwnerMailId;
+
+
+        string SUBJECT = "Jhalak-:- Business Enquiry from " + strUserName;
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.UserAcknowledgementMail(ownerName, strUserName));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool DeleteMail(string Name, string emailId, string AdId,string sid,string adtitle)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+
+        string SUBJECT = "Your Ad "+AdId+" deleted successfully " ;
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.DeleteMailAck(Name, emailId, AdId, sid,adtitle));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
+    public bool MakePremium(string Name, string emailId, string adtitle, string AdId)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+
+        string SUBJECT = "Make your Ad premium for Ad ID " + AdId;
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.MakePremiumAck(Name, emailId, adtitle, AdId));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    //public bool MakePremium(string Name, string emailId, string AdId)
+    //{
+    //    News_Letter clsNewsLetter = new News_Letter();
+    //    MailMessage strMailMsg = null;
+
+    //    const String FROM = "admin@jhalak.com";
+    //    string TO = emailId;
+
+
+
+    //    string SUBJECT = "Make your Ad premium for Ad ID " + AdId;
+    //    StringBuilder MailBody = new StringBuilder();
+    //    MailBody.AppendLine(clsNewsLetter.MakePremiumAck(Name, emailId, AdId));
+    //    // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+    //    strMailMsg = new MailMessage();
+    //    strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+    //    strMailMsg.To.Add(TO);
+    //    strMailMsg.Subject = SUBJECT;
+    //    strMailMsg.Body = MailBody.ToString();
+    //    strMailMsg.IsBodyHtml = true;
+
+
+    //    String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+    //    String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+    //    // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+    //    String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+    //    // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+    //    // STARTTLS to encrypt the connection.
+    //    const int PORT = 587;
+
+    //    // Create an SMTP client with the specified host name and port.
+    //    using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+    //    {
+    //        // Create a network credential with your SMTP user name and password.
+    //        client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+    //        // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+    //        // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+    //        client.EnableSsl = true;
+
+    //        // Send the email. 
+    //        try
+    //        {
+    //            client.Send(strMailMsg);
+    //            //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return false;
+    //        }
+    //    }
+
+
+    //    return true;
+    //}
+
+
+    public bool AcctUpdated(string Name, string emailId, string userserno)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "Your Account Updated Successfully ";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.AcctUpdatedAck(Name, emailId, userserno));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool AcctUpdatedBusiness(string Name, string emailId, string BName, string category)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailId;
+
+
+        string SUBJECT = "Your Profile has been updated to Business User ";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.AcctUpdatedBusinessAck(Name, emailId, BName, category));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool SignUpConfirmation(string userId, string strUserName)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = userId;
+
+
+        string SUBJECT = "Jhalak-:-  Signup confirmation";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.UserAcknowledgement(strUserName));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+    public bool SignUpConfirmation( string strUserId, string strUserName, string strURL)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = strUserId;
+
+
+        string SUBJECT = "Verify Your Email";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.UserAcknowledgement(strUserName, strURL));
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(strUserId);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+
+        // strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool UserConfirmation(string strUserId, string strUserName, string strpwd)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = strUserId;
+
+
+        string SUBJECT = "Account Confirmation";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.UserConfirmAcknowledgement(strUserName,strUserId,strpwd));
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(strUserId);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+
+        // strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+	public bool UserApproved(string strUserId, string strUserName)
+	{
+		News_Letter clsNewsLetter = new News_Letter();
+		MailMessage strMailMsg = null;
+
+		const String FROM = "admin@jhalak.com";
+		string TO = strUserId;
+
+
+		string SUBJECT = "Account Approval Confirmation";
+		StringBuilder MailBody = new StringBuilder();
+		MailBody.AppendLine(clsNewsLetter.UserApproval(strUserName, strUserId));
+		strMailMsg = new MailMessage();
+		strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+		strMailMsg.To.Add(strUserId);
+		strMailMsg.Subject = SUBJECT;
+		strMailMsg.Body = MailBody.ToString();
+
+		// strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+		strMailMsg.IsBodyHtml = true;
+
+
+		String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+		String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+		// Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+		String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+		// Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+		// STARTTLS to encrypt the connection.
+		const int PORT = 587;
+
+		// Create an SMTP client with the specified host name and port.
+		using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+		{
+			// Create a network credential with your SMTP user name and password.
+			client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+			// Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+			// the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+			client.EnableSsl = true;
+
+			// Send the email. 
+			try
+			{
+				client.Send(strMailMsg);
+				//  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
+		}
+
+
+		return true;
+	}
+
+	public bool ChangePassword(string strUserName,string date,string emailid)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = emailid;
+
+
+        string SUBJECT = "Jhalak Password has been Successfully Changed";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.UserChangePassword(strUserName,date));
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(emailid);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+
+        // strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    //public bool ChangePassword1(string strUserName, string strUrl, string emailid)
+    //{
+    //    News_Letter clsNewsLetter = new News_Letter();
+    //    MailMessage strMailMsg = null;
+
+    //    const String FROM = "admin@jhalak.com";
+    //    string TO = emailid;
+
+
+    //    string SUBJECT = "Change your Jhalak password";
+    //    StringBuilder MailBody = new StringBuilder();
+    //    MailBody.AppendLine(clsNewsLetter.UserChangePassword1(strUserName, strUrl));
+    //    strMailMsg = new MailMessage();
+    //    strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+    //    strMailMsg.To.Add(emailid);
+    //    strMailMsg.Subject = SUBJECT;
+    //    strMailMsg.Body = MailBody.ToString();
+
+    //    // strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+    //    strMailMsg.IsBodyHtml = true;
+
+
+    //    String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+    //    String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+    //    // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+    //    String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+    //    // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+    //    // STARTTLS to encrypt the connection.
+    //    const int PORT = 587;
+
+    //    // Create an SMTP client with the specified host name and port.
+    //    using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+    //    {
+    //        // Create a network credential with your SMTP user name and password.
+    //        client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+    //        // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+    //        // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+    //        client.EnableSsl = true;
+
+    //        // Send the email. 
+    //        try
+    //        {
+    //            client.Send(strMailMsg);
+    //            //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return false;
+    //        }
+    //    }
+
+
+    //    return true;
+    //}
+
+    public bool WriteNews(string strUsername, string strUserMailId, string strSubject,string strSummary)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = strUserMailId;
+
+
+        string SUBJECT = "Cricket:- Tournament News";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.WriteNews(strUsername,strSummary));
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public bool PostRaffleConfirmation(string strName, string userId, string Raffle)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = userId;
+
+
+        string SUBJECT = "Jhalak-:-  Raffle Post Confirmation";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.PostRaffleConfirmation(strName, userId, Raffle));
+        // strMailMsg = new MailMessage(FROM, strPlayerMailid, SUBJECT, MailBody.ToString());
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(TO);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
+
+    #region password
+    public bool ForgotPassword(string struserMaildId, string userName,string strPwd)
+    {
+        News_Letter clsNewsLetter = new News_Letter();
+        MailMessage strMailMsg = null;
+
+        const String FROM = "admin@jhalak.com";
+        string TO = struserMaildId;
+
+
+        string SUBJECT = "Jhalak-:- Reset Password";
+        StringBuilder MailBody = new StringBuilder();
+        MailBody.AppendLine(clsNewsLetter.ForgotPasswrod(userName,strPwd));
+        strMailMsg = new MailMessage();
+        strMailMsg.From = new MailAddress(FROM, "Jhalak.Com");
+        strMailMsg.To.Add(struserMaildId);
+        strMailMsg.Subject = SUBJECT;
+        strMailMsg.Body = MailBody.ToString();
+
+        // strMailMsg = new MailMessage(strMailMsg.From.ToString(), strUserMailid, SUBJECT,  MailBody.ToString());
+        strMailMsg.IsBodyHtml = true;
+
+
+        String SMTP_USERNAME = Convert.ToString(ConfigurationManager.AppSettings["SMTP-User"]);
+        String SMTP_PASSWORD = Convert.ToString(ConfigurationManager.AppSettings["SMTP-PWD"]); // Replace with your SMTP password.
+
+        // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
+        String HOST = Convert.ToString(ConfigurationManager.AppSettings["SMTP-Host"]);
+
+        // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
+        // STARTTLS to encrypt the connection.
+        const int PORT = 587;
+
+        // Create an SMTP client with the specified host name and port.
+        using (System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient(HOST, PORT))
+        {
+            // Create a network credential with your SMTP user name and password.
+            client.Credentials = new System.Net.NetworkCredential(SMTP_USERNAME, SMTP_PASSWORD);
+
+            // Use SSL when accessing Amazon SES. The SMTP session will begin on an unencrypted connection, and then 
+            // the client will issue a STARTTLS command to upgrade to an encrypted connection using SSL.
+            client.EnableSsl = true;
+
+            // Send the email. 
+            try
+            {
+                client.Send(strMailMsg);
+                //  client.Send(FROM, TO, SUBJECT, MailBody.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+
+    }
+    #endregion
+
+
+
+    
+}

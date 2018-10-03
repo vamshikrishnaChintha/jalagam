@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 14.375, 8.5" name="Dcjalagam">
+  <DataContextMoniker Name="/DcjalagamDataContext" />
+  <nestedChildShapes>
+    <classShape Id="9cc573d8-a245-4520-a9e9-ba0051379024" absoluteBounds="9.125, 5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/DcjalagamDataContext/Video_Gallery" />
+      <nestedChildShapes>
+        <elementListCompartment Id="256de31e-9990-46bd-b728-05b516a5aea3" absoluteBounds="9.14, 5.46, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="262cae59-c2ff-4e72-a2f1-ff31e907d0a0" absoluteBounds="3.625, 1.25, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/DcjalagamDataContext/Test_Driving_Det" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5791c5d5-daa4-4033-a47d-e140e285202d" absoluteBounds="3.64, 1.71, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3cd7c41c-7c05-4514-b293-a63f10c18158" absoluteBounds="12.125, 5, 2, 3.1170068359375014">
+      <DataClassMoniker Name="/DcjalagamDataContext/Dealer_Registration" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2ad6bd9f-4210-4f07-8457-433ece7d48a0" absoluteBounds="12.14, 5.4600000000000009, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5dadfbc6-93d9-4c09-ad8c-39cf59c97373" absoluteBounds="8.375, 6.625, 2, 1.3862939453125">
+      <DataClassMoniker Name="/DcjalagamDataContext/Photo_Gallery_Image_Det" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2d0c4084-0d4d-4ac7-9a2e-32cb840ac1bc" absoluteBounds="8.39, 7.085, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="73db43c2-26f9-4a37-8b2e-061d2983596b" absoluteBounds="3.875, 5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/DcjalagamDataContext/Photo_Gallery" />
+      <nestedChildShapes>
+        <elementListCompartment Id="17737e57-fcdc-4fd8-9d6b-4a35c1a05399" absoluteBounds="3.89, 5.46, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.875 : 6.3862939453125); (4.875 : 7.31814697265625); (8.375 : 7.31814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/DcjalagamDataContext/Photo_Gallery/Photo_Gallery_Photo_Gallery_Image_Det" />
+      <nodes>
+        <classShapeMoniker Id="73db43c2-26f9-4a37-8b2e-061d2983596b" />
+        <classShapeMoniker Id="5dadfbc6-93d9-4c09-ad8c-39cf59c97373" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="40c8f815-59e8-425a-aa19-459189874d3c" absoluteBounds="0.75, 4.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/DcjalagamDataContext/Accessories_Master" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5736e90b-f48f-43f1-a455-be07f215e15e" absoluteBounds="0.765, 5.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="11455b3e-71ab-4890-938e-c9e62b9cdcc9" absoluteBounds="0.875, 1.125, 2, 3.1170068359375">
+      <DataClassMoniker Name="/DcjalagamDataContext/Product_Master" />
+      <nestedChildShapes>
+        <elementListCompartment Id="97db6bf6-963c-4bf6-ac4b-080bf60c0126" absoluteBounds="0.89000000000000012, 1.585, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.875 : 2.32774983723958); (3.625 : 2.32774983723958)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/DcjalagamDataContext/Product_Master/Product_Master_Test_Driving_Det" />
+      <nodes>
+        <classShapeMoniker Id="11455b3e-71ab-4890-938e-c9e62b9cdcc9" />
+        <classShapeMoniker Id="262cae59-c2ff-4e72-a2f1-ff31e907d0a0" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="e65b6ca1-5648-4188-9ded-a27f729e6078" absoluteBounds="6.375, 1.25, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/DcjalagamDataContext/Branch_Detail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="357172ef-bab2-4e03-8130-b4d3616ec674" absoluteBounds="6.39, 1.71, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="033dbc74-2cbe-42d3-92fe-85e0c0658034" absoluteBounds="5.375, 3.75, 2, 1.9631982421875">
+      <DataClassMoniker Name="/DcjalagamDataContext/Contact_Us" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2745318a-adeb-4d94-81ba-29aef01118df" absoluteBounds="5.39, 4.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

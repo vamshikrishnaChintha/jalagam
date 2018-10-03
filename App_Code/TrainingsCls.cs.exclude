@@ -1,0 +1,191 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI.WebControls;
+using System.Web.UI;
+
+/// <summary>
+/// Summary description for ClsTrainings
+/// </summary>
+public class TrainingsCls
+{
+    DcClassifiedsDataContext dbEmup = new DcClassifiedsDataContext();
+
+    public TrainingsCls()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
+
+
+
+    public IQueryable GetCourses(int intCatId)
+    {
+
+        var objC = from objL in dbEmup.T_CourseDets
+                   where objL.CourseCategoryId == intCatId
+                   select new
+                   {
+                       Value =Convert.ToString( objL.CourseId),
+                       Text =Convert.ToString( objL.CourseName)
+
+                   };
+
+        return objC;
+
+
+
+    }
+
+    public IQueryable GetCategoryList()
+    {
+
+        var objC = from objL in dbEmup.T_CategoryDets
+                   select new
+                   {
+                       Value = objL.CategoryId,
+                       Text = objL.CategoryName
+
+                   };
+
+        return objC;
+
+
+
+    }
+
+
+    public IQueryable GetTrainerCoursesList(int Id)
+    {
+
+        var objC = from objL in dbEmup.T_TrainerAdCourses
+                   where objL.AdId == Id
+                   select new
+                   {
+                       Value = objL.AdId,
+                       Text = objL.T_CourseDet.CourseName
+
+                   };
+
+        return objC;
+
+
+
+    }
+
+    public void FillDropDownList(IQueryable IqueryName, DropDownList ddlDropDownList)
+    {
+
+        ddlDropDownList.Items.Clear();
+        ddlDropDownList.Items.Add("Select");
+        ddlDropDownList.DataSource = IqueryName;
+        ddlDropDownList.DataValueField = "Value";
+        ddlDropDownList.DataTextField = "Text";
+
+
+
+        ddlDropDownList.DataBind();
+
+    }
+
+
+    public void FillCheckBoxList(IQueryable IqueryName, CheckBoxList chkBoxlist)
+    {
+
+        chkBoxlist.Items.Clear();
+
+        chkBoxlist.DataSource = IqueryName;
+        chkBoxlist.DataValueField = "Value";
+        chkBoxlist.DataTextField = "Text";
+
+
+
+        chkBoxlist.DataBind();
+
+    }
+    public void FillRadioBoxList(IQueryable IqueryName, RadioButtonList rdBoxlist)
+    {
+
+        rdBoxlist.Items.Clear();
+
+        rdBoxlist.DataSource = IqueryName;
+        rdBoxlist.DataValueField = "Value";
+        rdBoxlist.DataTextField = "Text";
+
+
+
+        rdBoxlist.DataBind();
+
+    }
+
+    public IQueryable GetSeekerCoursesList(int Id)
+    {
+
+        var objC = from objL in dbEmup.T_SeekerAdCourses
+                   where objL.SeekerAdId == Id
+                   select new
+                   {
+                       Value = objL.SeekerAdId,
+                       Text = objL.T_CourseDet.CourseName
+
+                   };
+
+        return objC;
+
+
+
+    }
+
+
+    public IQueryable GetFreelancerAds(string strUserId)
+    {
+        var objG = from objS in dbEmup.T_FreelancerAdDets
+                   where objS.EmailId == strUserId
+                   orderby objS.FreelancerAdId descending
+                   select new
+                   {
+                       Id = objS.FreelancerAdId,
+                       Title = objS.AdTitle,
+                       Category = objS.T_CategoryDet.CategoryName,
+
+                   };
+
+        return objG;
+    }
+
+    public IQueryable GetSeekerAds(string strUserId)
+    {
+        var objG = from objS in dbEmup.T_SeekerAdDets
+                   where objS.EmailId == strUserId
+                   orderby objS.SeekerAdId descending
+                   select new
+                   {
+                       Id = objS.SeekerAdId,
+                       Title = objS.Subject,
+                       Category = objS.T_CategoryDet.CategoryName,
+
+                   };
+
+        return objG;
+    }
+
+
+    public IQueryable GetTrainerAds(string strUserId)
+    {
+        var objG = from objS in dbEmup.T_TrainerAdDets
+                   where objS.Email == strUserId
+                   orderby objS.TrainerAdId descending
+                   select new
+                   {
+                       Id = objS.TrainerAdId,
+                       Title = objS.AdTitle,
+                       Category = objS.T_CategoryDet.CategoryName,
+
+                   };
+
+        return objG;
+    }
+
+}
