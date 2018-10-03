@@ -1,0 +1,359 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
+using AjaxControlToolkit;
+using System.Web.Security;
+using System.Security.Principal;
+
+using System.Web.UI.HtmlControls;
+
+
+public partial class User_Details : System.Web.UI.Page
+{
+    protected string latti { get; set; }
+    protected string longi { get; set; }
+    string strIP { set; get; }
+    PublicMethods clsPublic = new PublicMethods();
+   
+    MailServicesCls clsMail = new MailServicesCls();
+    DcClassifiedsDataContext dbEMUP = new DcClassifiedsDataContext();
+    protected void Page_Load(object sender, EventArgs e)
+
+    {
+        if (!Page.IsPostBack)
+        {
+
+            strIP = string.Empty;
+            strIP = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            litiP.Text = strIP;
+            if (string.IsNullOrEmpty(strIP))
+                litiP.Text = Request.ServerVariables["REMOTE_ADDR"];
+
+            GetData();
+           GetRating(Convert.ToString(litUserId.Text));
+
+            gvcomments.DataSource = GetUserComments(Convert.ToString(litUserId.Text));
+            gvcomments.DataBind();
+
+
+        }
+    }
+    private void GetData()
+    {
+        var objU = from objD in dbEMUP.UserDets
+                   where objD.UserSerNo == Convert.ToInt16(Request.QueryString["Id"])
+                   select objD;
+
+        UserDet objUD = objU.SingleOrDefault();
+        TxtName.Text = Convert.ToString(objUD.Name);
+        TxtContact.Text = Convert.ToString(objUD.ContactNo);
+        litUserId.Text = Convert.ToString(objUD.EmailId);
+        TxtLocation.Text = Convert.ToString(objUD.Location);
+        imgLogo.ImageUrl = "Load-Image.aspx?UserId=" + Convert.ToInt16(Request.QueryString["Id"]);
+        if (Convert.ToString(objUD.CategoryId) != "")
+        {
+            lblBusinessCat.Text = Convert.ToString(objUD.CategoryDet.Categoryname);
+        }
+       
+        if (Convert.ToString(objUD.BusinessName) != "")
+        {
+            txtBusinessName.Text = Convert.ToString(objUD.BusinessName);
+        }
+        if (Convert.ToString(objUD.BusinessContact) != "")
+        {
+            txtBusinessContact.Text = Convert.ToString(objUD.BusinessContact);
+        }
+
+        //if (Convert.ToString(objUD.OperationLocatoin) != "")
+        //{
+        //    txtLocationOperations.Text = Convert.ToString(objUD.OperationLocatoin);
+        //}
+        if (Convert.ToString(objUD.AboutUs) != "")
+        {
+            txtAbtUs.Text = Convert.ToString(objUD.AboutUs);
+        }
+        else
+        {
+            txtAbtUs.Text = "NA";
+        }
+        if (Convert.ToString(objUD.Website) != "")
+        {
+            hlWebsite.Text = Convert.ToString(objUD.Website);
+            hlWebsite.NavigateUrl = Convert.ToString(objUD.Website);
+
+        }
+       
+
+        latti = Convert.ToString(objUD.Latitude);
+        longi = Convert.ToString(objUD.Longitude);
+
+        if (objUD.UserType == "Premium")
+        {
+            lblStatus.Visible = true;
+        }
+        else
+        {
+            lblStatus.Visible = false;
+        }
+
+        this.Title = Convert.ToString(lblBusinessCat.Text) + " " + Convert.ToString(txtBusinessName.Text) + " In " + Convert.ToString(Session["loc"]);
+    }
+
+    protected void btnContact_Click(object sender, EventArgs e)
+    {
+        if (Page.IsValid)
+        {
+            BusinessEnquiryDet objAdResponseDet;
+
+            objAdResponseDet = new BusinessEnquiryDet();
+
+
+            objAdResponseDet.RespondentName = Convert.ToString(txtUserName.Text);
+
+            objAdResponseDet.UserEmailId = Convert.ToString(litUserId.Text);
+
+          
+
+            objAdResponseDet.RespondentMailId = Convert.ToString(txtEmail.Text);
+            objAdResponseDet.Description = Convert.ToString(txtMsg.Text);
+
+            objAdResponseDet.ResponseDate = DateTime.Now;
+           
+           
+            objAdResponseDet.PhoneNo = Convert.ToString(txtContactNo.Text);
+
+            try
+            {
+                dbEMUP.BusinessEnquiryDets.InsertOnSubmit(objAdResponseDet);
+                dbEMUP.SubmitChanges();
+               clsMail.BusinessEnquiry(Convert.ToString(litUserId.Text), Convert.ToString(objAdResponseDet.UserDet.Name), Convert.ToString(txtUserName.Text));
+                clsPublic.ClearControls(Page.Controls);
+                lblMsg.Text = "Message has been sent ";
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                //Response.Redirect("Default.aspx");
+            }
+
+
+        }
+
+
+
+
+    }
+
+    protected void OnRatingChanged(object sender, RatingEventArgs e)
+    {
+        //if (Context.User.Identity.IsAuthenticated == false)
+
+        //{
+        //    HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+        //    FormsAuthentication.SignOut();
+        //    Session.Abandon();
+        //    string spath = HttpContext.Current.Request.Url.AbsolutePath;
+        //    //  Response.Redirect("Organizer-Login.aspx");
+        //    //Response.Redirect("Sign-In.aspx?s=" + spath);
+        //}
+
+
+        if (ValidateUserRating(Convert.ToString(litiP.Text)) == false)
+        {
+            User_Review_Det obj = new User_Review_Det();
+        obj.UserEmailId = Convert.ToString(litUserId.Text);
+        obj.Rating = Convert.ToInt16(e.Value);
+        // obj.CreatedBy = Convert.ToString(Context.User.Identity.Name.ToString());
+
+        //   obj.IP = litiP.Text;
+
+        dbEMUP.User_Review_Dets.InsertOnSubmit(obj);
+        dbEMUP.SubmitChanges();
+      }
+        GetRating(Convert.ToString(litUserId.Text));
+    }
+
+    private void GetRating(string UMail)
+    {
+        //DataTable dt = this.GetData("SELECT ISNULL(AVG(Rating), 0) AverageRating, COUNT(Rating) RatingCount FROM Movie_Rating where MovieId=" + movieId);
+
+        DataTable dt = this.Getdata("SELECT ROUND(ISNULL(CAST(SUM(Rating) AS NUMERIC(5, 2)) / COUNT(Rating), 0), 1) AverageRating, COUNT(Rating) RatingCount FROM User_Review_Det where UserEmailId= '" +UMail + "'");
+
+
+        rMovie.CurrentRating = Convert.ToInt32(dt.Rows[0]["AverageRating"]);
+        lblRatingStatus.Text = Convert.ToString(dt.Rows[0]["RatingCount"]);
+        // lblAverageRating.Text = Convert.ToString(dt.Rows[0]["AverageRating"]);
+
+        lblAverageRating.Text = Convert.ToDouble(dt.Rows[0]["AverageRating"]).ToString("#0.0").Replace(".0", "");
+        //AvgRati = Convert.ToInt32(dt.Rows[0]["AverageRating"]);
+        //rMovie.CurrentRating = Convert.ToInt32(dt.Rows[0]["AverageRating"]);
+        //lblRatingStatus.Text = string.Format("{0} Users rated. Average Rating {1}", dt.Rows[0]["RatingCount"], dt.Rows[0]["AverageRating"]);
+    }
+
+
+
+    private DataTable Getdata(string query)
+    {
+        DataTable dt = new DataTable();
+        string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+        using (SqlConnection con = new SqlConnection(constr))
+        {
+            using (SqlCommand cmd = new SqlCommand(query))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    sda.SelectCommand = cmd;
+                    sda.Fill(dt);
+                }
+            }
+            return dt;
+        }
+    }
+
+
+    public IQueryable GetUserComments(string UmailId)
+    {
+
+        var objUserReviews = from ObjReview in dbEMUP.User_Review_Dets
+                                  where ObjReview.UserEmailId == UmailId
+                                  orderby ObjReview.ReviewId descending
+                                  select new
+                                  {
+
+                                      Comment= ObjReview.ReviewDesc,
+                                      Name = ObjReview.Name,
+                                      Date=ObjReview.Date
+                                      //  Rating=ObjReview.Rating
+
+                                      //FunnyChamberTitle1 = "<div class='title-head'><b>" + objFunnyCham.Title.Substring(0, 150) + "..." + "</b><br/></div>" + "</div>",
+                                      //JhalakFunnyChamber = (objFunnyCham.Title.Replace(" ", "-").Replace(",", "").Replace(":", "").Replace("!", "").Replace("@", "").Replace("#", "").Replace("$", "").Replace("%", "").Replace("^", "").Replace("&", "").Replace("*", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("=", "").Replace("{", "").Replace("}", "").Replace(";", "").Replace("'", "").Replace("<", "").Replace(">", "").Replace("/", "").Replace("?", "").Replace("|", "")).Trim() + "-" + objFunnyCham.FunnychamberId,
+                                      //FunnychamberId = objFunnyCham.FunnychamberId,
+                                      //ImageURl = objFunnyCham.ImageURL != null ? objFunnyCham.ImageURL : "/images/Jhalak-Logo.png",
+                                  };
+
+        return objUserReviews;
+
+    }
+
+
+   
+
+    protected void btncomment_Click(object sender, EventArgs e)
+    {
+        User_Review_Det objAdResponseDet;
+
+        objAdResponseDet = new User_Review_Det();
+
+
+        objAdResponseDet.Name = Convert.ToString(txtCommentName.Text);
+
+        objAdResponseDet.ReviewerEmail = Convert.ToString(txtCommentEmail.Text);
+        objAdResponseDet.UserEmailId = Convert.ToString(litUserId.Text);
+
+
+
+        objAdResponseDet.ReviewDesc = Convert.ToString(txtComment.Text);
+        objAdResponseDet.Date = DateTime.Now;
+
+     
+
+        try
+        {
+            dbEMUP.User_Review_Dets.InsertOnSubmit(objAdResponseDet);
+            dbEMUP.SubmitChanges();
+         
+            clsPublic.ClearControls(Page.Controls);
+            gvcomments.DataSource = GetUserComments(Convert.ToString(litUserId.Text));
+            gvcomments.DataBind();
+            lblCommentMSG.Text = "Comment Submitted Sucessfully ";
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+        finally
+        {
+            //Response.Redirect("Default.aspx");
+        }
+
+    }
+
+
+
+
+    private bool ValidateUserRating(string Ip)
+    {
+        var obj = from objM in dbEMUP.User_Review_Dets
+                  where objM.Ip == Ip
+                  select objM;
+        User_Review_Det objR = obj.SingleOrDefault();
+
+        if (objR == null)
+
+            return false;
+        else
+            return true;
+
+        //bool exist = dbEmup.Movie_Ratings.Any(email => email.CreatedBy.Equals(Context.User.Identity.Name.ToString()) && );
+        //return exist;
+    }
+
+
+
+    protected void gvcomments_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+
+
+
+        //foreach (GridViewRow row in gvcomments.Rows)
+        //{
+        // for (int i = 0; i < gvcomments.Rows.Count; i++)
+        // {
+        // string UComment = ((Label)gvcomments.Rows[i].FindControl("lblCComment")).Text;
+
+
+
+
+
+        // if (UComment == null)
+        // {
+        // e.Row.Visible = false;
+
+        // }
+        // }
+        //}
+
+
+
+
+        foreach (GridViewRow rw in gvcomments.Rows)
+        {
+            Label tx = (Label)rw.FindControl("lblCComment");
+
+            if (tx.Text == "")
+                rw.Visible = false;
+
+        }
+
+
+        //if (e.Row.Cells[2].Text == "")
+        // e.Row.Visible = false;
+    }
+
+}

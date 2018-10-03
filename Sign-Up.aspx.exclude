@@ -1,0 +1,519 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Sign-Up.aspx.cs" Inherits="Sign_Up" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="Server">
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="Server">
+    <script type="text/javascript">
+        $(function () {
+            $('.txtPassword').val("<%=TxtPwd.Text%>");
+        });
+    </script>
+    <script type="text/javascript">
+        function ValidateCheckBox(sender, args) {
+            if (document.getElementById("<%=chkAgree.ClientID %>").checked == true) {
+                args.IsValid = true;
+            } else {
+                args.IsValid = false;
+            }
+        }
+    </script>
+    <script src="js/jquery-1.8.3.js" type="text/javascript" language="javascript"></script>
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFQ3AIGGC5qW6Vt80Hzlx8gVfJRYpRTPM&sensor=false&libraries=places&region=in" type="text/javascript"></script>
+
+    <%--<script language="javascript" type="text/javascript">
+        function forBusiness() {
+            var tb1 = document.getElementById('<%= divList.ClientID %>');
+
+
+             if (document.getElementsById('<%= chkBusiness.ClientID %>').checked = true) {
+                 tb1.style.display = 'true???';
+             }
+             else {
+                 tb1.style.display = 'none';
+             }
+        }
+    </script>--%>
+    <script language="javascript" type="text/javascript">
+        function forRentClicked(sender) {
+            var tb1 = document.getElementById('<%= divList.ClientID %>');
+            tb1.style.display = sender.checked ? 'inline' : 'none';
+        }
+    </script>
+
+    <script>
+
+        function getZip() {
+            callZipAPI(document.forms[0].TxtLocation.value);
+        }
+
+        function callZipAPI(addSearchZip) {
+            var geocoder = new google.maps.Geocoder();
+            var zipCode = null;
+
+            geocoder.geocode({ 'address': addSearchZip }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+
+
+                    var addressComponent = results[0].address_components;
+                    for (var x = 0; x < addressComponent.length; x++) {
+                        var chk = addressComponent[x];
+                        if (chk.types[0] == 'postal_code') {
+                            zipCode = chk.long_name;
+                        }
+                    }
+                    if (zipCode) {
+                        document.getElementById("<%= txtZip.ClientID %>").value = zipCode;
+                    }
+
+                }
+
+
+
+
+
+            });
+        }
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var autocomplete = new google.maps.places.Autocomplete($("#TxtLocation")[0], {});
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                var place = autocomplete.getPlace();
+                console.log(place.address_components);
+            });
+
+        }
+        );
+        var prm = Sys.WebForms.PageRequestManager.getInstance();
+
+        prm.add_endRequest(function () {
+            var autocomplete = new google.maps.places.Autocomplete($("#TxtLocation")[0], {});
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                var place = autocomplete.getPlace();
+                console.log(place.address_components);
+
+            });
+        });
+
+    </script>
+
+
+    <asp:UpdatePanel ID="Updatepanel" runat="server">
+
+        <ContentTemplate>
+            
+
+            
+
+            <%--<script type="text/javascript">
+                google.maps.event.addDomListener(window, 'load', function () {
+                    var places = new google.maps.places.Autocomplete(document.getElementById('TxtLocation'));
+                    google.maps.event.addListener(places, 'place_changed', function () {
+                        var place = places.getPlace();
+                        var address = place.formatted_address;
+
+                    });
+                });
+            </script>--%>
+           <%-- <script type="text/javascript">
+                google.maps.event.addDomListener(window, 'load', function () {
+                    var places = new google.maps.places.Autocomplete(document.getElementById('txtCity'));
+                    google.maps.event.addListener(places, 'place_changed', function () {
+                        var place = places.getPlace();
+                        var address = place.formatted_address;
+
+                    });
+                });
+            </script>--%>
+           <%-- <script type="text/javascript">
+                google.maps.event.addDomListener(window, 'load', function () {
+                    var places = new google.maps.places.Autocomplete(document.getElementById('txtLocationOperations'));
+                    google.maps.event.addListener(places, 'place_changed', function () {
+                        var place = places.getPlace();
+                        var address = place.formatted_address;
+
+                    });
+                });
+            </script>--%>
+            <asp:Literal ID="litLat" Visible="false" runat="server"></asp:Literal>
+            <asp:Literal ID="litLong" Visible="false" runat="server"></asp:Literal>
+
+
+            <div class="jhkfrm margin-top margin-bottom row" id="SignUpAnchor">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="col-sm-7 col-xs-12 login-centered">
+                        <div class="form-horizontal">
+                            <div class="txtcenter txtcenter border-bottom margin-bottom">
+                                <img src="images/organizer-login-bg.png" /><br />
+                                <b>Create a new account.</b>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                     <div class="margin-top">
+                                    <asp:Label runat="server" CssClass="control-label">Name</asp:Label>
+                                    <span style="color: red;">*</span>
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="TxtName" MaxLength="100" CssClass="form-control" />
+
+                                        <asp:RequiredFieldValidator ID="RfvName" ValidationGroup="SignUp" ControlToValidate="TxtName" ForeColor="Red" ErrorMessage="Name is Required !" Display="Dynamic" runat="server" />
+
+                                    </div>
+                                         </div>
+                                    <div class="margin-top">
+                                    <asp:Label runat="server" CssClass=" control-label">Email Id</asp:Label>
+                                    <span style="color: red;">*</span>
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="TxtEmail" ValidationGroup="SignUp" CssClass="form-control" MaxLength="50" />
+                                        <asp:RequiredFieldValidator ID="RfvEmail" ValidationGroup="SignUp" ControlToValidate="TxtEmail" ErrorMessage="Email is Required !" ForeColor="Red" Display="Dynamic" runat="server" />
+
+
+                                        <asp:RegularExpressionValidator ID="rfEmail" runat="server" Display="Dynamic" ValidationGroup="SignUp" ControlToValidate="TxtEmail" ErrorMessage="Enter a valid Email Address !" ForeColor="Red" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" />
+                                        
+
+
+                                    </div>
+                                        </div>
+                                    <div class="margin-top">
+                                    <asp:Label runat="server" CssClass=" control-label">Contact Number</asp:Label>
+
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="TxtContact" ValidationGroup="SignUp" placeholder="6977127777" MaxLength="10" CssClass="form-control" />
+                                        <asp:RequiredFieldValidator ID="RfvContact" ControlToValidate="TxtContact" ErrorMessage="Contact Number is Required !" Display="Dynamic" runat="server" />
+                                        <cc1:FilteredTextBoxExtender ID="txtPhone_FilteredTextBoxExtender" runat="server"
+                                            Enabled="True" TargetControlID="TxtContact" ValidChars="1234567890">
+                                        </cc1:FilteredTextBoxExtender>
+                                        <asp:RegularExpressionValidator ID="RegularExpressionValidator7" Display="Dynamic" ValidationGroup="SignUp"
+                                            runat="server" ErrorMessage="Enter valid Phone number !"
+                                            ControlToValidate="TxtContact"
+                                            ValidationExpression="^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"></asp:RegularExpressionValidator>
+                                    </div>
+                                        </div>
+
+
+                             </div>
+                                <div class="col-sm-6">
+                                     <div class="margin-top">
+                                    <asp:Label runat="server" CssClass=" control-label">City</asp:Label>
+                                    <span style="color: red;">*</span>
+                                        
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="txtCity" MaxLength="30" placeholder="CityName,StateCode"
+                                            Style="font-family: CustomFont, FontAwesome" ClientIDMode="Static"></asp:TextBox>
+                                        <ajaxToolkit:AutoCompleteExtender ID="ComboBox1" runat="server"
+                                                            MinimumPrefixLength="2" CompletionListCssClass="ajax-srch" 
+                                                            CompletionInterval="10" EnableCaching="false" CompletionSetCount="3"
+                                                            TargetControlID="txtCity" ServiceMethod="GetCityList" ServicePath="WsAutoFill.asmx">
+                                                        </ajaxToolkit:AutoCompleteExtender>
+
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="txtCity" ValidationGroup="SignUp" ErrorMessage="City is Required !" Display="Dynamic" runat="server" />
+                                    </div>
+                                     </div>
+                                    <div class="margin-top">
+                                    <asp:Label runat="server" CssClass=" control-label">Password</asp:Label>
+                                    <span style="color: red;">*</span>
+                                       
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="TxtPwd" TextMode="Password" MaxLength="30" CssClass="form-control" />
+
+                                        <asp:RequiredFieldValidator ID="RfvPwd" ValidationGroup="SignUp" ControlToValidate="TxtPwd" ForeColor="Red" ErrorMessage="Password is required!"
+                                            Display="Dynamic" runat="server" />
+
+
+                                        <cc1:PasswordStrength ID="PasswordStrength" runat="server"
+                                            DisplayPosition="BelowLeft" StrengthIndicatorType="Text"
+                                            TargetControlID="TxtPwd" PrefixText="Password Stength:" Enabled="true"
+                                            RequiresUpperAndLowerCaseCharacters="true" MinimumLowerCaseCharacters="1"
+                                            MinimumUpperCaseCharacters="1" MinimumSymbolCharacters="1"
+                                            MinimumNumericCharacters="1" PreferredPasswordLength="10"
+                                            TextStrengthDescriptions="VeryPoor; Weak; Average; Strong; Excellent"
+                                            BarBorderCssClass="border" TextStrengthDescriptionStyles="PwdVeryPoor;PwdWeak;PwdAvg;PwdStrong;PwdExcel" />
+                                    </div>
+                                    </div>
+                                    <div class="margin-top">
+                                    <asp:Label runat="server" CssClass=" control-label ">Confirm password</asp:Label>
+                                    <span style="color: red;">*</span>
+                                    <div class="margin-bottom">
+                                        <asp:TextBox runat="server" ID="TxtCfmPwd" TextMode="Password" CssClass="form-control" />
+                                        <asp:RequiredFieldValidator ID="RfvCmfPwd" ValidationGroup="SignUp" ControlToValidate="TxtCfmPwd" ForeColor="Red" ErrorMessage="Confirm Password is required !"
+                                            Display="Dynamic" runat="server" />
+
+
+                                        <asp:CompareValidator ID="CompareValidator1" runat="server" ValidationGroup="SignUp"
+                                            ControlToValidate="TxtCfmPwd"
+                                            CssClass="ValidationError"
+                                            ControlToCompare="TxtPwd"
+                                            ErrorMessage="Password and Confirm Password Must be Same !" ForeColor="Red"
+                                            ToolTip="Password must be the same" />
+                                        <asp:RegularExpressionValidator Display="Dynamic" ControlToValidate="TxtCfmPwd" ID="RegularExpressionValidator6" ValidationExpression="^[\s\S]{6,30}$" runat="server" ErrorMessage="Password Minimum 6 and Maximum 30 characters required !"></asp:RegularExpressionValidator>
+
+
+                                    </div>
+                                        </div>
+                        </div>
+
+
+                        </div>
+
+
+
+
+
+                            <div class=" row margin-bottom">
+                                <div class="txtcenter">
+
+
+                                    <div class="list-bg">
+                                        <h4>
+                                            <b>
+                                                <asp:CheckBox runat="server" ID="chkBusiness" onClick="forRentClicked(this)" ToolTip="Your business will listed in Jhalak Service Providers Directory" />&nbsp;<asp:Label runat="server" CssClass="control-label">List Your Business for Free</asp:Label>&nbsp;<i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                                                <%-- <asp:CheckBox ID="chkBusiness" Text="List Your Business for Free" AutoPostBack="true" runat="server" OnCheckedChanged="chkBusiness_CheckedChanged" ToolTip="Your business will listed in Jhalak Service Providers Directory" />--%>
+                                            </b>
+                                        </h4>
+                                    </div>
+
+                                </div>
+                                <div class="jhkfrm  col-sm-12" runat="server" id="divList" style="display: none">
+                                    <div id="page-wrap">
+
+                                        <div runat="server" id="divBusiness" class="margin-top  padding-top col-sm-12" style="background: #f3f3f3; border: 1px solid #ccc">
+                                            <h4><b>Select a category </b><span style="color: red;">*</span></h4>
+
+                                            <asp:DropDownList ID="ddlCategory" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlCategory_SelectedIndexChanged">
+                                            </asp:DropDownList>
+                                            <div class="checkbox-inline table-responsive">
+                                                <asp:CheckBoxList ID="chkSubCategory" CssClass="chk-align checkbox-inline checkbox-align-large" RepeatDirection="Horizontal" RepeatColumns="3" runat="server"></asp:CheckBoxList>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-sm-12 margin-top margin-bottom padding" style="background: #f3f3f3; border: 1px solid #ccc;">
+                                            <div class="col-sm-6 padding">
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass="control-label"><b>Business Name</b></asp:Label><span style="color: red;">*</span>
+
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="txtBusinessName" MaxLength="100" CssClass="form-control" placeholder="Enter Your Business Name" />
+
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+
+                                                    <asp:Label runat="server" CssClass="control-label" ID="label20"><b>Business Contact Number</b></asp:Label>
+
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="txtBusinessContact" ValidationGroup="SignUp" MaxLength="10" placeholder="6977127777" CssClass="form-control" />
+                                                        <cc1:FilteredTextBoxExtender ID="ftbBContact" runat="server"
+                                                            Enabled="True" TargetControlID="txtBusinessContact" FilterType="Numbers">
+                                                        </cc1:FilteredTextBoxExtender>
+                                                        <asp:RegularExpressionValidator ID="RegularExpressionValidator2" Display="Dynamic" ValidationGroup="SignUp"
+                                                            runat="server" ErrorMessage="Enter valid Phone number !"
+                                                            ControlToValidate="txtBusinessContact"
+                                                            ValidationExpression="^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"></asp:RegularExpressionValidator>
+
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass="control-label"><b>Website</b></asp:Label>
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="txtWebsite" ValidationGroup="SignUp" placeholder="http://www.jhalak.com" MaxLength="100" CssClass="form-control" />
+                                                        <asp:RegularExpressionValidator ID="RegularExpressionValidator4" ControlToValidate="txtWebsite" Display="Dynamic" ValidationGroup="SignUp"
+                                                            Text="Invalid Website URL !" ValidationExpression="(([\w]+:)?\/\/)?(([\d\w]|%[a-fA-f\d]{2,2})+(:([\d\w]|%[a-fA-f\d]{2,2})+)?@)?([\d\w][-\d\w]{0,253}[\d\w]\.)+[\w]{2,8}(:[\d]+)?(\/([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)*(\?(&?([-+_~.\d\w]|%[a-fA-f\d]{2,2})=?)*)?(#([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)?$" runat="server" />
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass="control-label"><b>Upload Business Logo</b></asp:Label>
+                                                    <div>
+                                                        <asp:FileUpload ID="fupLogo" runat="server" />
+
+                                                        <asp:RegularExpressionValidator ID="rexp" runat="server" ControlToValidate="fupLogo"
+                                                            ErrorMessage="Only .gif, .jpg, .png, .tiff and .jpeg !" ValidationGroup="SignUp"
+                                                            ValidationExpression="(.*\.([Gg][Ii][Ff])|.*\.([Jj][Pp][Gg])|.*\.([Bb][Mm][Pp])|.*\.([pP][nN][gG])|.*\.([tT][iI][iI][fF])$)"></asp:RegularExpressionValidator>
+
+                                                        <asp:Label ID="lblText" runat="server" Text=""></asp:Label>
+                                                        <div id="divImage" style="display: none">
+                                                            <asp:Image ID="img1" runat="server" ImageUrl="~/images/PleaseWait.gif" />
+                                                            Please wait.....
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <%-- <asp:Label runat="server" CssClass="control-label">Business Hours</asp:Label>
+
+                            <div>
+                                <asp:TextBox runat="server" ID="TextBox1" MaxLength="12" CssClass="form-control" />
+                               
+
+
+                            </div>--%>
+                                            </div>
+                                            <div class="col-sm-6 ">
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass=" control-label"><b>Location</b></asp:Label><span style="color: red;">*</span>
+                                                    <%--<span style="color: red;">*</span>--%>
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="TxtLocation" MaxLength="200" ClientIDMode="Static" CssClass="form-control" />
+                                                        <%--<asp:RequiredFieldValidator ID="RfvLocation" ValidationGroup="SignUp" ControlToValidate="TxtLocation" ForeColor="Red" ErrorMessage="Location is Required" Display="Dynamic" runat="server" />--%>
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass=" control-label"><b>Zip Code</b></asp:Label>
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="txtZip" onFocus="getZip()" MaxLength="6" placeholder=" Zip Code " CssClass="form-control" />
+
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+                                                    <asp:Label runat="server" CssClass="control-label"><b>City</b></asp:Label><span style="color: red;">*</span>
+                                                    <div>
+                                                        <asp:TextBox runat="server" ID="txtLocationOperations" placeholder="CityName,StateCode" ClientIDMode="Static" MaxLength="100" CssClass="form-control" />
+                                                        <ajaxToolkit:AutoCompleteExtender ID="AutoCompleteExtender1" runat="server"
+                                                            MinimumPrefixLength="2" CompletionListCssClass="ajax-srch" 
+                                                            CompletionInterval="10" EnableCaching="false" CompletionSetCount="3"
+                                                            TargetControlID="txtLocationOperations" ServiceMethod="GetCityList" ServicePath="WsAutoFill.asmx">
+                                                        </ajaxToolkit:AutoCompleteExtender>
+
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="padding">
+                                                    <asp:Label runat="server" Visible="false" CssClass="control-label"><b>Upload Flyer</b></asp:Label>
+                                                    <div>
+                                                        <asp:FileUpload ID="fupFlyer" Visible="false" runat="server" />
+                                                        <asp:RegularExpressionValidator ID="RegularExpressionValidator5" runat="server" ControlToValidate="fupFlyer"
+                                                            ErrorMessage="Only .gif, .jpg, .png, .tiff and .jpeg !"
+                                                            ValidationExpression="(.*\.([Gg][Ii][Ff])|.*\.([Jj][Pp][Gg])|.*\.([Bb][Mm][Pp])|.*\.([pP][nN][gG])|.*\.([tT][iI][iI][fF])$)"></asp:RegularExpressionValidator>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <asp:Label runat="server" CssClass="control-label"><b>About Us</b></asp:Label>
+
+                                                <div>
+                                                    <asp:TextBox runat="server" ID="txtAbtUs" TextMode="MultiLine" Rows="5" />
+
+                                                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="txtAbtUs"
+                                                        Display="Dynamic" ErrorMessage="Please limit to 5000 characters or less !" ValidationGroup="SignUp"
+                                                        ValidationExpression="[\s\S]{1,5000}"></asp:RegularExpressionValidator>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="row">
+                                                <table class="table post-frm-tbl">
+                                                    <tr class="txtcenter">
+                                                        <th style="background: #333; color: #fff">
+                                                            <h4><b>Features</b></h4>
+                                                        </th>
+                                                        <th style="background: #05508A; color: #fff">
+                                                            <div class="  btn-group customradio txtcenter">
+                                                                <label>
+                                                                    <asp:RadioButton runat="server" ID="rdFree" Checked="true" GroupName="radio" Text="Free" />
+                                                                </label>
+                                                            </div>
+                                                        </th>
+                                                        <th style="background: #E21C04; color: #fff;">
+                                                            <div class="btn-group customradio txtcenter">
+                                                                <label>
+                                                                    <asp:RadioButton runat="server" ID="rdPremium" GroupName="radio" Text="Premium" />
+                                                                    ($100)
+                                                                </label>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><b>Responses & Visibility</b></td>
+                                                        <td>Limited Visibility & Responses</td>
+                                                        <td>More Visible and reachout to more Customers</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td><b>Listed with Premium Label</b></td>
+                                                        <td style="color: red"><i class="fa fa-times i-size"></i></td>
+                                                        <td><i class="fa fa-check i-color i-size"></i></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td><b>Responses Sent Via E-mail</b></td>
+                                                        <td><i class="fa fa-check i-color i-size"></i></td>
+                                                        <td><i class="fa fa-check i-color i-size"></i></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Dedicated Customer Support</b></td>
+                                                        <td><i class="fa fa-check i-color i-size"></i></td>
+                                                        <td><i class="fa fa-check i-color i-size"></i></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    $(".Business-frm").hide();
+                                    $(".inputcheckbox").click(function () {
+                                        if ($(this).is(":checked")) {
+                                            $(".Business-frm").show();
+                                        } else {
+                                            $(".Business-frm").hide();
+                                        }
+                                    });
+                                </script>
+
+
+                            </div>
+                            <div class="row txtcenter">
+                                <div>
+
+                                    <asp:CheckBox runat="server" ID="chkAgree" />&nbsp;<asp:Label runat="server" CssClass="control-label"></asp:Label>
+                                    I agree to the Jhalak  <a href="Jhalak.com Terms of Service.docx" target="_blank">User Agreement,Terms of Service</a> and <a href="Jhalak.com Privacy Policy.docx" target="_blank">Privacy Policy</a>
+                                </div>
+                                 <div class="col-sm-12 txtcenter">
+                                <asp:Label ID="lblMsg" Font-Bold="true" ForeColor="Red" Font-Size="12" runat="server" Text=""></asp:Label>
+                            </div>
+                                <div class="txtcenter">
+                                    <asp:Button ID="btnSubmit" runat="server" Text="Create Account" ValidationGroup="SignUp" OnClick="btnSubmit_Click" CssClass="btn btn-default list-btn" /><br />
+                                    <asp:CustomValidator ID="CustomValidator1" ValidationGroup="SignUp" runat="server" ErrorMessage="Please agree Jhalak Terms of service !" ClientValidationFunction="ValidateCheckBox"></asp:CustomValidator>
+                                </div>
+                            </div>
+                           
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </ContentTemplate>
+        <Triggers>
+            <asp:PostBackTrigger ControlID="btnSubmit" />
+
+
+            <asp:PostBackTrigger ControlID="ddlCategory" />
+
+
+
+
+        </Triggers>
+    </asp:UpdatePanel>
+
+</asp:Content>
+

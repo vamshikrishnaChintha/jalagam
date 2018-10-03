@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Jalagam" Class="DcjalagamDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=jhalakservices.cpm5bnayea5q.us-west-2.rds.amazonaws.com;Initial Catalog=Jalagam;Persist Security Info=True;User ID=shailesh" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="JalagamConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Video_Gallery" Member="Video_Galleries">
+    <Type Name="Video_Gallery">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(10,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Caption" Type="System.String" DbType="VarChar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Test_Driving_Det" Member="Test_Driving_Dets">
+    <Type Name="Test_Driving_Det">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(7,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Address" Type="System.String" DbType="VarChar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="ContactNo" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailId" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="ProductCode" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Association Name="Product_Master_Test_Driving_Det" Member="Product_Master" ThisKey="ProductCode" OtherKey="Prodcut_Code" Type="Product_Master" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Dealer_Registration" Member="Dealer_Registrations">
+    <Type Name="Dealer_Registration">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(4,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Dealer_Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Age" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Qualification" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailId" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ContactNo" Type="System.String" DbType="VarChar(13) NOT NULL" CanBeNull="false" />
+      <Column Name="City" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Currnet_Business" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="FirmName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Constitution" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Photo_Gallery_Image_Det" Member="Photo_Gallery_Image_Dets">
+    <Type Name="Photo_Gallery_Image_Det">
+      <Column Name="PhotoId" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GalleryId" Type="System.Decimal" DbType="Decimal(6,0) NOT NULL" CanBeNull="false" />
+      <Column Name="Photo" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Association Name="Photo_Gallery_Photo_Gallery_Image_Det" Member="Photo_Gallery" ThisKey="GalleryId" OtherKey="Id" Type="Photo_Gallery" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Photo_Gallery" Member="Photo_Galleries">
+    <Type Name="Photo_Gallery">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(6,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Caption" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Association Name="Photo_Gallery_Photo_Gallery_Image_Det" Member="Photo_Gallery_Image_Dets" ThisKey="Id" OtherKey="GalleryId" Type="Photo_Gallery_Image_Det" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Accessories_Master" Member="Accessories_Masters">
+    <Type Name="Accessories_Master">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(6,0) NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Accessorie_Name" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Product_Code" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Price" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="About_Product" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="DisplayImage" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Product_Master" Member="Product_Masters">
+    <Type Name="Product_Master">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(5,0) NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Prodcut_Code" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Price" Type="System.String" DbType="VarChar(7) NOT NULL" CanBeNull="false" />
+      <Column Name="ProductName" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="BatteryType" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Color" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
+      <Column Name="Tags" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DisplayImage" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Visible" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Association Name="Product_Master_Test_Driving_Det" Member="Test_Driving_Dets" ThisKey="Prodcut_Code" OtherKey="ProductCode" Type="Test_Driving_Det" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Branch_Details" Member="Branch_Details">
+    <Type Name="Branch_Detail">
+      <Column Name="Branch_Id" Type="System.Decimal" DbType="Decimal(4,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Branch_Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Address" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="ContactNumbers" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailId" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="State" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Contact_Us" Member="Contact_Us">
+    <Type Name="Contact_Us">
+      <Column Name="Id" Type="System.Decimal" DbType="Decimal(10,0) NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="EmailId" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
+      <Column Name="ContactNumber" Type="System.String" DbType="VarChar(13)" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

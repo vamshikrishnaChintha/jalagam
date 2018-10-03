@@ -1,0 +1,358 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="en">
+<head runat="server">
+
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title></title>
+    <%--
+    <link type="text/css" rel="stylesheet" href="font-awesome/css/font-awesome.min.css"
+        hreflang="en-us" />
+    <link rel="stylesheet" href="css/custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/forms.css" type="text/css" />
+
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" hreflang="en-us" />
+    <script type="text/javascript" src="js/jquery-1-11-1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <link rel="Shortcut Icon" href="Images/sudimnaOnlyLogo.png" type="image/ico" runat="server" />--%>
+    <link rel="icon" href="images/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+   
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <link href="font-awesome/css/all.css" rel='stylesheet' type='text/css' />  
+    <link href="css/fontawesome-all.css" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet" />
+
+    <script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5bae29c485136400117095e9&product=sticky-share-buttons' async='async'></script>
+    <script type="text/javascript">
+            (function ($) {
+                $.fn.menumaker = function (options) {
+                    var cssmenu = $(this), settings = $.extend({
+                        format: "dropdown",
+                        sticky: false
+                    }, options);
+                    return this.each(function () {
+                        $(this).find(".button").on('click', function () {
+                            $(this).toggleClass('menu-opened');
+                            var mainmenu = $(this).next('ul');
+                            if (mainmenu.hasClass('open')) {
+                                mainmenu.slideToggle().removeClass('open');
+                            }
+                            else {
+                                mainmenu.slideToggle().addClass('open');
+                                if (settings.format === "dropdown") {
+                                    mainmenu.find('ul').show();
+                                }
+                            }
+                        });
+                        cssmenu.find('li ul').parent().addClass('has-sub');
+                        multiTg = function () {
+                            cssmenu.find(".has-sub").prepend('<span class="submenu-button"></span>');
+                            cssmenu.find('.submenu-button').on('click', function () {
+                                $(this).toggleClass('submenu-opened');
+                                if ($(this).siblings('ul').hasClass('open')) {
+                                    $(this).siblings('ul').removeClass('open').slideToggle();
+                                }
+                                else {
+                                    $(this).siblings('ul').addClass('open').slideToggle();
+                                }
+                            });
+                        };
+                        if (settings.format === 'multitoggle') multiTg();
+                        else cssmenu.addClass('dropdown');
+                        if (settings.sticky === true) cssmenu.css('position', 'fixed');
+                        resizeFix = function () {
+                            var mediasize = 1000;
+                            if ($(window).width() > mediasize) {
+                                cssmenu.find('ul').show();
+                            }
+                            if ($(window).width() <= mediasize) {
+                                cssmenu.find('ul').hide().removeClass('open');
+                            }
+                        };
+                        resizeFix();
+                        return $(window).on('resize', resizeFix);
+                    });
+                };
+            })(jQuery);
+
+            (function ($) {
+                $(document).ready(function () {
+                    $("#cssmenu").menumaker({
+                        format: "multitoggle"
+                    });
+                });
+            })(jQuery);
+
+
+    </script>
+    
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form runat="server">
+        <asp:ToolkitScriptManager runat="server"></asp:ToolkitScriptManager>
+        
+
+
+        <div class="header">
+            <div class="row">
+
+                <nav id="cssmenu" class="navbar navbar-expand-lg navbar-light bg-light">
+
+<div id="head-mobile"></div>
+                    <a class="navbar-brand" href="electric-vehicles"><img src="images/jalagam-motors-w-logo.png"/></a>
+<div class="button"></div>
+<ul class="margin-top margin-left">
+<li class='active'><a href='electric-vehicles'>HOME</a></li>
+    
+   
+    <li><a href='#'>SHOP</a>
+
+    <ul>
+      <li><a href="electric-vehicles-Products">PRODUCTS</a>
+        
+      </li>
+    
+      <li><a href="electric-vehicles-accessories">ACCESSORIES</a>
+      </li>
+   </ul>
+</li>
+     <li><a href='#'>MEDIA</a>
+
+    <ul>
+      <li><a href="photo-gallery-list.aspx">PHOTO GALLERY</a>
+        
+      </li>
+        <li><a href="photo-gallery-list.aspx">PRESS RELEASE</a>
+        
+      </li>
+    
+     
+   </ul>
+</li>
+    <%--<li><a href='Default.aspx'>MEDIA</a></li>--%>
+  <%--  <li><a href='photo-gallery-list.aspx'>GALLERY</a></li>--%>
+    <li><a href="Add-Dealer.aspx">BECOME A DEALER</a></li>
+    <li><a href="jalagam-Motors-Branches">BRANCHES</a></li>
+    <li><a href='Contactus.aspx'>CONTACT US</a></li>
+     <li><a href='aboutus.aspx'>ABOUT US</a></li>
+    <li><a href="Add-Test-Driving.aspx" class="test-btn" style="color:red!important;">TEST RIDE</a></li>
+    <li><a href="<%=this.ResolveUrl("Sign-In.aspx")%>" class="test-login" >LOG IN</a></li>
+    
+
+
+   
+  
+   
+
+    
+   
+</ul>
+                    <span style="float:right;color:#fff; text-align:center">
+                    <asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="false">
+            <AnonymousTemplate>
+
+            </AnonymousTemplate>
+
+
+          
+
+
+
+
+            <LoggedInTemplate>
+                <div style="position:relative;top:-5px;">
+                Welcome: <span class="bold">
+                    <asp:LoginName ID="HeadLoginName" runat="server" />
+                </span>!
+                           
+							<div style="margin-top:5px">
+                <span class="bold"><span class="glyphicon glyphicon-user"></span>
+                    <asp:HyperLink ID="hlMyAccount" NavigateUrl="~/Dashboard.aspx" runat="server" Style="color: #fff;">My Account</asp:HyperLink>
+                </span>&nbsp;&nbsp; <span class="glyphicon glyphicon-log-out"></span>&nbsp;<asp:LoginStatus
+                    ID="HeadLoginStatus" runat="server" Style="color: #fff;" LogoutAction="Redirect"
+                    LogoutText="Log Out" LogoutPageUrl="~/Default.aspx" />
+                                </div>
+                    </div>
+            </LoggedInTemplate>
+            <RoleGroups>
+            </RoleGroups>
+        </asp:LoginView>
+                        </span>
+
+</nav>
+
+
+
+            </div>
+            <%--<nav class="navbar navbar-expand-lg navbar-light bg-light">
+ <a class="navbar-brand" href="index.html"><img src="images/jalagam-motors-logo.png"/></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="index.html">HOME <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link scroll" href="#about">ABOUT US</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link scroll" href="#services">SHOP</a>
+      </li>
+	   <li class="nav-item">
+        <a class="nav-link scroll" href="#works">MEDIA</a>
+      </li>
+	   <li class="nav-item">
+        <a class="nav-link scroll" href="#pricing">GALLERY</a>
+      </li>
+	  <li class="nav-item">
+        <a class="nav-link scroll" href="#contact">BECOME OUR DEALER</a>
+      </li>
+ <li class="nav-item">
+        <a class="nav-link scroll" href="Branches-List.aspx">BRANCHES</a>
+      </li>
+ <li class="nav-item">
+        <a class="nav-link scroll" href="#contact">CONTACT US</a>
+      </li>
+    </ul>
+    <div class="navbar-text">
+     <p class="right-p"><i class="fas fa-phone" aria-hidden="true"></i>123-456-7890</p>
+    </div>
+  </div>
+</nav>--%>
+            
+           
+        </div>
+
+
+
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+        </asp:ContentPlaceHolder>
+
+       
+        
+        <div class="container-fluid footer-bg  padding-bottom-20">
+            <div class="teamgrids row">
+                <div class="col-md-4  col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>REACH US</h3>
+                        <div class="footer-list">
+                            <ul>
+                            <li>
+                                Jalagam Motors.<br />
+                             
+                           </li>
+                                <li>
+                            <div class="margin-top">
+                               
+                                E-Mail: info@jalagammotors.com<br />
+                                   
+                                
+                                    Mobile: 9848997066, 9246914369
+                               
+                            </div>
+                                    </li>
+                                </ul>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>FEATURED PRODUCTS</h3>
+                        <div class="footer-list">
+                            <ul>
+                                <li>Electric Cycle - Ampere Angel
+                                </li>
+                                <li>Electric Scooter - Ampere V48 
+                                </li>
+                                <li>Electric Indoor Mobility Vehicle - Ampere Trisul 
+                                </li>
+                                <li>E Trolley - Ampere E-Trolley
+                                </li>
+                                <li>Electric Load Carrier - Ampere Mitra 
+                                </li>
+                                <li>Electric Three Wheeler - Ampere ERikshaw 
+                                </li>
+                                <li>Electric Vehicle - Ampere Mitra WMS</li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>CUSTOMER SERVICE</h3>
+                        <div class="footer-list">
+                            <ul>
+                                <li>Privacy Policy
+                                </li>
+                                <li>Quality Policy
+                                </li>
+                                <li>Shipping & Delivery
+                                </li>
+                                <li>Terms & Conditions
+                                </li>
+                                <li>Returns & Cancellation
+                                </li>
+                                <li>Disclaimer
+                                </li>
+
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-right">
+                    <ul class="list-inline ul-list">
+                        <li>
+                            <a href="https://www.facebook.com/RMN-Motors-249075525656675/"><img src="images/facebook-icon.png"/></a>
+                        </li>
+                        <li>
+                            <a  href="https://twitter.com/MotorsRmn">
+                                <img src="images/twitter-icon.png" /></a>
+                        </li>
+                       
+                        <li>
+                            <a href="mailto:mail@google.com">
+                                <img src="images/youtube-icon.png" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+       
+    </form>
+
+   
+  <%--  <script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="js/jquery.countup.js"></script>--%>
+
+</body>
+</html>

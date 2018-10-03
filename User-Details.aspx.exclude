@@ -1,0 +1,334 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="User-Details.aspx.cs" Inherits="User_Details" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="Server">
+
+    
+    <style type="text/css">
+        .Star {
+            background-image: url(images/Star.png);
+            height: 21px;
+            width: 21px;
+        }
+
+        .WaitingStar {
+            background-image: url(images/WaitingStar.png);
+            height: 21px;
+            width: 21px;
+        }
+
+        .FilledStar {
+            background-image: url(images/FilledStar.png);
+            height: 21px;
+            width: 21px;
+        }
+    </style>
+
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+        <ContentTemplate>
+
+
+
+            <script type="text/javascript">
+        function initialize() {
+            var lat = document.getElementById('txtlat').value;
+            var lon = document.getElementById('txtlon').value;
+            var myLatlng = new google.maps.LatLng(lat, lon) // This is used to center the map to show our markers
+            var mapOptions = {
+                center: myLatlng,
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                marker: true
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+            var marker = new google.maps.Marker({
+                position: myLatlng
+            });
+            marker.setMap(map);
+        }
+    </script>
+    <div class="row ">
+        <div class="col-sm-12 profile-styles margin-top">
+            <asp:Literal ID="litUserId" Visible="false" runat="server"></asp:Literal>
+            <asp:Literal ID="litiP" Visible="false" runat="server"></asp:Literal>
+            <div class="col-sm-9">
+                <div class="inner-nav margin-bottom">
+                    <ul>
+                        <li><a href="Default.aspx">Home</a></li>
+                        <li><a href="#">Business Directory</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-12 listitem padding-bottom margin-top white-bg box-border">
+                    <div class="col-sm-10">
+                        <div class="row">
+                            <div class="border-bottom padding-bottom i2-color">
+                                <h4 style="line-height:30px;">
+                                    <asp:Label ID="txtBusinessName" runat="server" Text=""></asp:Label>
+                                    <%--<asp:Label ID="litStatus" CssClass="premium-tag" Text="Premium" runat="server"></asp:Label>--%>
+
+                                    <asp:Label ID="lblStatus" CssClass="premium-tag" runat="server" Text="Premium"></asp:Label><br />
+                                    <%--<span class="premium-ad margin-bottom" id="divAdType" runat="server">
+                                            <img src="images/ribbon.png" width="20" height="20"/>&nbsp;PREMIUM 
+                                        </span>--%>
+
+                                </h4>
+                                <div style="font-size: 13px; color: #333">
+                                    <img src="images/FilledStar.png" alt="Rating" style="margin-bottom: 5px;" />Avg.User Rating:<asp:Label ID="lblAverageRating" runat="server" Text=""></asp:Label>/5</div>
+                            </div>
+                            
+                            
+                        </div>
+
+                        <div class="row">
+                            <div class="inner-list col-sm-6 no-padding">
+                                <ul>
+                                    <li>
+                                        <b>Name:</b>
+                                        <asp:Label ID="TxtName" runat="server" CssClass="i2-color" Text=""></asp:Label>
+
+                                    </li>
+                                    <li>
+                                        <b>Contact:</b>
+                                        <asp:Label ID="TxtContact" runat="server" CssClass="i2-color" Text="Label"></asp:Label>
+                                    </li>
+                                    <li>
+
+                                        <i class="fa fa-map-marker i2-color i2-size" aria-hidden="true"></i>&nbsp;<asp:Label ID="TxtLocation" runat="server" Text="Label"></asp:Label>
+                                        <input type="button" class="map-btn" value="&#xf041; Show Map" style="font-family: Arial, FontAwesome;" onclick="javascript: initialize()" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <div style="display: none;">
+                                    <input type="text" visible="false" id="txtlat" value="<%= latti %>" />
+
+                                    <input type="text" visible="false" id="txtlon" value="<%= longi %>" />
+                                </div>
+                                <div id="map_canvas" style="height: 200px"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-2">
+                        <asp:Image ID="imgLogo" onerror="if (this.src != 'images/no-photo.png') this.src = 'images/no-photo.png';" runat="server" />
+                    </div>
+                </div>
+
+                <div class="col-sm-12 white-bg margin-top padding-bottom box-border i-icon">
+
+                    <div>
+                        <h4 class="border-bottom padding-bottom i2-color"><b>Business Details</b></h4>
+<div class="row">
+                    
+                    <div class="col-sm-6 col-xs-12 margin-bottom">
+                        <div>
+                            <b><i class="fa fa-user"></i>&nbsp;Business category: </b>
+                            <%--<asp:Label ID="lblBusinessCat" runat="server" Text=""></asp:Label>--%>
+                            <asp:Label ID="lblBusinessCat" CssClass="i2-color" runat="server"></asp:Label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xs-12 margin-bottom">
+                        <div>
+                            <b><i class="fa fa-phone"></i>&nbsp;Business contact:</b>
+                            <%--<asp:TextBox ReadOnly="true" runat="server" ID="txtBusinessContact" ValidationGroup="SignUp" MaxLength="12" />--%>
+                            <asp:Label ID="txtBusinessContact" CssClass="i2-color" runat="server"></asp:Label>
+                        </div>
+                    </div>
+                    <%-- <div class="col-sm-6 col-xs-12 margin-bottom">
+                        <div><b><i class="fa fa-map-marker"></i>&nbsp;Location of operations</b>
+                      
+                        <asp:Label ID="txtLocationOperations" runat="server"></asp:Label></div>
+
+                    </div>--%>
+                    <div class="col-sm-6 col-xs-12 margin-bottom">
+                        <div>
+                            <b><i class="fa fa-globe"></i>&nbsp;Website:</b>
+                            <%--<asp:TextBox runat="server" ID="txtWebsite" ReadOnly="true" />--%>
+                            <asp:HyperLink ID="hlWebsite" runat="server" Target="_blank"></asp:HyperLink>
+                        </div>
+                    </div>
+                        </div>
+</div>
+
+                </div>
+                <div class="col-sm-12 white-bg margin-top box-border txtarea txtarea-border margin-bottom">
+
+                    <div>
+                        <h4 class="border-bottom padding-bottom i2-color"><b>About Us</b></h4>
+                    </div>
+                    <%-- <asp:TextBox runat="server" ID="txtAbtUs" ReadOnly="true" TextMode="MultiLine" Rows="5" />--%>
+                    <asp:Label ID="txtAbtUs" runat="server" Width="100%" Text=""></asp:Label>
+                </div>
+
+
+
+                <div class="col-sm-12 white-bg margin-top box-border txtarea txtarea-border margin-bottom jhkfrm">
+                    <h3 class="i2-color">
+                        <b>Leave Your Comment</b></h3>
+<div class="row">
+<div class="col-sm-6">
+    <div class="padding">
+        <asp:TextBox ID="txtCommentName" MaxLength="30" runat="server" placeholder="&#xf007; Name" Style="font-family: Arial,FontAwesome" />
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ValidationGroup="vgComment"  ControlToValidate="txtCommentName"
+            ForeColor="Red" ErrorMessage="Your Name is Required." Display="Dynamic" runat="server" />
+    </div>
+</div>
+                    <div class="col-sm-6">
+                        <div class="padding">
+                            <asp:TextBox ID="txtCommentEmail" runat="server" MaxLength="100" placeholder="&#xf0e0; Email Id" Style="font-family: Arial,FontAwesome" />
+                            <%--  <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ValidationGroup="vgContact" ControlToValidate="txtCommentEmail"
+                            ErrorMessage="Email is Required." ForeColor="Red" Display="Dynamic" runat="server" />--%>
+                            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" Display="Dynamic" ValidationGroup="vgComment"
+                                ControlToValidate="txtCommentEmail" ErrorMessage="Enter a valid Email ID" ForeColor="Red"
+                                ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" />
+                            <%--  <cc1:ValidatorCalloutExtender ID="ValidatorCalloutExtender1" runat="server" TargetControlID="RfvEmail"
+                            Width="220" CloseImageUrl="images/alert-close.png" WarningIconImageUrl="images/alert-img.png" />--%>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="padding">
+
+                            <asp:TextBox ID="txtComment" runat="server" MaxLength="300" TextMode="MultiLine" placeholder="&#xf0c9; Your Comments" Style="font-family: Arial,FontAwesome" />
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator4" ValidationGroup="vgComment" ControlToValidate="txtComment"
+                                ErrorMessage="Your Review is Required" Display="Dynamic" runat="server" />
+
+
+                        </div>
+                    </div>
+                    
+                    
+
+                    <asp:Label ID="lblCommentMSG" runat="server" Text=""></asp:Label>
+                    <div class="txtcenter col-sm-12 padding sub-btn">
+                        <asp:Button runat="server" ID="btncomment" ValidationGroup="vgComment" Text="Comment"
+                            CssClass=" " OnClick="btncomment_Click" />
+                    </div>
+</div>
+                </div>
+
+
+
+                <div class="col-sm-12 white-bg margin-top box-border txtarea txtarea-border margin-bottom">
+                    <div>
+                        <h4 class="border-bottom padding-bottom i2-color"><b>Comments</b></h4>
+                    </div>
+                <asp:GridView ID="gvcomments" CssClass="comments-grid" runat="server" EmptyDataText="No Reviews" PagerSettings-Visible="true" OnRowDataBound="gvcomments_RowDataBound"
+                    ShowHeader="false" AutoGenerateColumns="false"
+                    HorizontalAlign="center">
+                    <Columns>
+                        <asp:TemplateField HeaderText="">
+                            <ItemTemplate>
+<table width="100%">
+<tr>
+<td width="50"><i class="fa fa-user user-comments-icon"></i></td>
+<td>
+    <div style="color:#333;">
+        <b>
+        <asp:Label ID="lblCName" runat="server" Text='<%#Eval("Name") %>'></asp:Label>
+            : </b><br />
+        <span class="comment-date">
+        <asp:Label ID="Label2" runat="server" Text='<%#Eval("Date") %>'></asp:Label>
+</span>
+    </div>
+</td>
+</tr>
+    <tr>
+        <td colspan="2">
+            <div class="user-comments">
+                <asp:Label ID="lblCComment" runat="server" Text='<%#Eval("Comment") %>'></asp:Label></div>
+        </td>
+       
+    </tr>
+</table>
+                            <%--    <asp:Label ID="Label1" runat="server" Text='<%#Eval("EMail") %>'></asp:Label>--%>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+
+                    </Columns>
+
+                </asp:GridView>
+</div>
+            </div>
+
+
+
+            <div class="col-sm-3   jhkfrm">
+                <div class="margin-bottom" id="rc" style="background: #3BA4F5; padding: 8px;">
+
+                    <%-- <div>
+                        <img src="images/rating-anim.gif" />
+                    </div>--%>
+                    <div>
+                        <cc1:Rating ID="rMovie" AutoPostBack="true" OnChanged="OnRatingChanged" runat="server"
+                            StarCssClass="Star" WaitingStarCssClass="WaitingStar" EmptyStarCssClass="Star"
+                            FilledStarCssClass="FilledStar" MaxRating="5">
+                        </cc1:Rating>
+                    </div>
+                    <div style="clear: both"></div>
+                    <div style="color:white; padding-top: 5px">
+                        <b>
+                            <asp:Label ID="lblRatingStatus" runat="server" Text=""></asp:Label>&nbsp;User's Rated</b>
+                    </div>
+
+                </div>
+                <div class="div-box padding white-bg box-bg box-border">
+                    <h3>
+                        <b>Business Enquiry</b></h3>
+                    <div class="padding">
+                        <asp:TextBox ID="txtUserName" runat="server" placeholder="&#xf007; Name" Style="font-family: Arial,FontAwesome" />
+                        <asp:RequiredFieldValidator ID="RfvName" ValidationGroup="vgContact" ControlToValidate="txtUserName"
+                            ForeColor="Red" ErrorMessage="Name is Required." Display="Dynamic" runat="server" />
+                    </div>
+                    <div class="padding">
+                        <asp:TextBox ID="txtEmail" runat="server" placeholder="&#xf0e0; Email Id" Style="font-family: Arial,FontAwesome" />
+                        <asp:RequiredFieldValidator ID="RfvEmail" ValidationGroup="vgContact" ControlToValidate="txtEmail"
+                            ErrorMessage="Email is Required." ForeColor="Red" Display="Dynamic" runat="server" />
+                        <asp:RegularExpressionValidator ID="rfEmail" runat="server" Display="Dynamic" ValidationGroup="vgContact"
+                            ControlToValidate="txtEmail" ErrorMessage="Enter a valid Email ID" ForeColor="Red"
+                            ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" />
+                        <cc1:ValidatorCalloutExtender ID="ValidatorCalloutExtender3" runat="server" TargetControlID="RfvEmail"
+                            Width="220" CloseImageUrl="images/alert-close.png" WarningIconImageUrl="images/alert-img.png" />
+                    </div>
+                    <div class="padding">
+                        <asp:TextBox ID="txtContactNo" runat="server" MaxLength="12" placeholder="&#xf095; Contact Number" Style="font-family: Arial,FontAwesome" />
+                        <asp:RequiredFieldValidator ID="RfvContact" ValidationGroup="vgContact" ControlToValidate="txtContactNo"
+                            ErrorMessage="Contact Number is Required" Display="Dynamic" runat="server" />
+                        <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender" runat="server" Enabled="True"
+                            TargetControlID="txtContactNo" FilterType="Numbers">
+                        </cc1:FilteredTextBoxExtender>
+                        <asp:RegularExpressionValidator ID="RegularExpressionValidator2" ControlToValidate="txtContactNo" Display="Dynamic" ValidationGroup="vgContact"
+                            runat="server" ErrorMessage="Only Numbers allowed" ValidationExpression="\d+"></asp:RegularExpressionValidator>
+                    </div>
+                    <div class="padding">
+                        <asp:TextBox ID="txtMsg" runat="server" MaxLength="100" TextMode="MultiLine" placeholder="&#xf0c9; Description" Style="font-family: Arial,FontAwesome" />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ValidationGroup="vgContact"
+                            ControlToValidate="txtMsg" ErrorMessage="Message is required" ForeColor="Red"
+                            Display="Dynamic" runat="server" />
+                    </div>
+                    <asp:Label ID="lblMsg" runat="server" Text=""></asp:Label>
+                    <div class="txtcenter padding">
+                        <asp:Button runat="server" ID="btnContact" ValidationGroup="vgContact" Text="Contact"
+                            CssClass="btn btn-default respond-btn" OnClick="btnContact_Click" />
+                    </div>
+                </div>
+
+              
+
+            </div>
+
+
+
+        </div>
+    </div>
+    </ContentTemplate>
+
+    </asp:UpdatePanel>
+</asp:Content>
+

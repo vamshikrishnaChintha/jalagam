@@ -1,0 +1,248 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.Security;
+using System.Text;
+
+using System.Security.Principal;
+public partial class Account_Login : System.Web.UI.Page
+{
+
+    static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("shailesh");
+    static byte[] bytes1 = ASCIIEncoding.ASCII.GetBytes("gajula");
+    PublicMethods clsPublicMethods = new PublicMethods();
+    DcClassifiedsDataContext dbEmup = new DcClassifiedsDataContext();
+    MailServicesCls clsMail = new MailServicesCls();
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!Page.IsPostBack)
+        {
+
+
+
+
+
+            HttpCookie rSessionCookie = new HttpCookie("ASP.NET_SessionId", "");
+            rSessionCookie.Expires = DateTime.Now.AddYears(-1);
+            Response.Cookies.Add(rSessionCookie);
+            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+            FormsAuthentication.SignOut();
+            Session.Abandon();
+            Session.Clear();
+            if (Request.QueryString["S"] == "Yes")
+            {
+                lblSignin.Text = " <div class='jha-success'><h3>" + "<i class='fa fa-check fa-2x'></i>  " + " Activate your account, please check your mail" + " </h3></div>";
+
+            }
+           
+            else if (Request.QueryString["Id"] != null)
+            {
+                UpdateStatus();
+                GetUserDet(Convert.ToInt16(Request.QueryString["Id"]));
+                Response.Redirect("Sign-In.aspx");
+				//lblSignin.Text = " <div class='jha-success'><h3>" + "<i class='fa fa-check fa-2x'></i>  " + "Account is activated as premium..." + "</h3></div>";
+
+			}
+            
+        }
+        this.Form.DefaultButton = this.btnSignIn.UniqueID;
+
+
+
+    }
+
+    protected void btnSignIn_Click(object sender, EventArgs e)
+    {
+
+
+
+        bool blnOrg = true;
+
+        blnOrg = clsPublicMethods.ValidateUser(Convert.ToString(txtUserId.Text), Convert.ToString(txtPwd.Text));
+        if (blnOrg == true)
+        {
+            FormsAuthentication.SetAuthCookie(txtUserId.Text.Trim(), false);
+
+            FormsAuthenticationTicket ticketUser = new FormsAuthenticationTicket(1, txtUserId.Text.Trim(), DateTime.Now, DateTime.Now.AddDays(2), true, "User");
+            HttpCookie cookieUser = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticketUser));
+            //HttpContext.Current.Response.Cookies["J@#(*&U"].Value = "(*&^%$";
+            //HttpContext.Current.Response.Cookies["JUser"].Value = txtUserId.Text.Trim();
+            HttpContext.Current.Response.Cookies["JUser"].Expires = DateTime.Now.AddDays(2);
+
+
+            //HttpCookie cookieCrossD = new HttpCookie("J@User", Convert.ToString(txtUserId.Text));
+            cookieUser.Domain = ".jhalak.com";
+            //   HttpContext.Current.Response.Cookies.Add(cookieUser);
+            //cookieCrossD.Expires = DateTime.Now.AddMinutes(120);
+            //HttpContext.Current.Response.Cookies.Add(cookieCrossD);
+            //cookieUser.Domain = "jhalak.com";
+            //cookieUser.Expires = DateTime.Now.AddDays(-1d);
+
+            if (chkRememberPwd.Checked)
+            {
+                Response.Cookies["UserName"].Expires = DateTime.Now.AddDays(1);
+                Response.Cookies["Password"].Expires = DateTime.Now.AddDays(1);
+            }
+            else
+            {
+                Response.Cookies["UserName"].Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies["Password"].Expires = DateTime.Now.AddDays(-1);
+
+            }
+
+            Response.Cookies["UserName"].Value = txtUserId.Text.Trim();
+            Response.Cookies["Password"].Value = txtPwd.Text.Trim();
+            Response.Cookies.Add(cookieUser);
+            SaveLoginDetails();
+            if (Request.QueryString["EventId"] != null)
+            {
+                Response.Redirect("http://events.jhalak.com/Book-Tickets.aspx?Id=" + Convert.ToString(Request.QueryString["EventId"]));
+            }
+            else
+            {
+                Response.Redirect("My-Posts.aspx");
+            }
+           
+
+
+        }
+        else
+        {
+            lblSignin.Text = " <div style='color:red;'>" + "Please Enter Valid Credentials" + "</div>";
+            return;
+        }
+    }
+
+    private void UpdateStatus()
+    {
+        UserDet objO;
+
+        objO = dbEmup.UserDets.SingleOrDefault(objcr => objcr.UserSerNo == Convert.ToDecimal(Request.QueryString["Id"]));
+        objO.UserType = "Premium";
+		//objO.Status = "Active";
+		objO.Status = "Active";
+        objO.Verified = "Verified";
+
+        try
+        {
+            dbEmup.SubmitChanges();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+
+        
+    }
+    private void UpdateVerification()
+    {
+        UserDet objO;
+
+        objO = dbEmup.UserDets.SingleOrDefault(objcr => objcr.UserSerNo == Convert.ToDecimal(Request.QueryString["Id"]));
+
+        //objO.Status = "Active";
+        objO.Status = "Active";
+        objO.Verified = "Verified";
+
+        try
+        {
+            dbEmup.SubmitChanges();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+
+
+    }
+    private void GetUserDet(int userId)
+    {
+        var obj = from objU in dbEmup.UserDets
+                  where objU.UserSerNo == userId
+                  select objU;
+        UserDet objD = obj.SingleOrDefault();
+
+        clsMail.UserConfirmation(Convert.ToString(objD.EmailId), Convert.ToString(objD.Name), Convert.ToString(objD.Password));
+    }
+    private void UpdatePassword(string strPwd)
+    {
+        UserDet objO;
+
+        objO = dbEmup.UserDets.SingleOrDefault(objcr => objcr.EmailId == Convert.ToString(txtUserId.Text));
+        objO.Password = strPwd;
+        try
+        {
+            dbEmup.SubmitChanges();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+    protected void btnForgotPwd_Click(object sender, EventArgs e)
+    {
+        if (txtUserId.Text == "")
+        {
+            lblforgot.Text = " <div class='jha-invalid'><h3>" + "<i class='fa fa-times fa-2x'></i>  " + " Enter your Mail id" + "</h3></div>";
+            return;
+        }
+        string strUsername = clsPublicMethods.GetUserName(Convert.ToString(txtUserId.Text));
+
+        if (strUsername != "")
+        {
+            string strEncryptPwd = Encryption_Data.Encrypt(Convert.ToString(txtUserId.Text), bytes, bytes1);
+            strEncryptPwd = strEncryptPwd.Substring(0, 6);
+            UpdatePassword(strEncryptPwd);
+            clsMail.ForgotPassword(Convert.ToString(txtUserId.Text.Trim()), strUsername, strEncryptPwd);
+            lblforgot.Text = " <div class='jha-success'><h3>" + "<i class='fa fa-check fa-2x'></i>  " + " Password sent to your registered Mail id" + "</h3></div>";
+            txtUserId.Text = "";
+        }
+        else
+        {
+            lblforgot.Text = " <div class='jha-invalid'><h3>" + "<i class='fa fa-times fa-2x'></i>  " + " Mail id does not exist" + "</h3></div>";
+        }
+
+
+
+
+    }
+    private void SaveLoginDetails()
+    {
+
+        string strIP = string.Empty;
+        strIP = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+        if (string.IsNullOrEmpty(strIP))
+            strIP = Request.ServerVariables["REMOTE_ADDR"];
+
+
+        User_Login_Det objU = new User_Login_Det();
+
+        if (Request.Cookies["UserName"] != null)
+        {
+            objU.UserId = Request.Cookies["UserName"].Value;
+
+        }
+        objU.IP = strIP;
+        objU.Status = "in";
+        objU.LoggedInOut = DateTime.Now;
+        try
+        {
+            dbEmup.User_Login_Dets.InsertOnSubmit(objU);
+            dbEmup.SubmitChanges();
+        }
+        catch
+        {
+
+        }
+
+    }
+
+   
+
+
+}

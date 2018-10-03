@@ -1,0 +1,291 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Post-Ad.master.cs" Inherits="Post_Ad" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title></title>
+    <link rel="icon" href="images/favicon.png" type="image/x-icon" />
+    <link type="text/css" rel="stylesheet" href="font-awesome/css/font-awesome.min.css"
+        hreflang="en-us" />
+    <link rel="stylesheet" href="css/custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/forms.css" type="text/css" />
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <link href="font-awesome/css/all.css" rel='stylesheet' type='text/css' />
+    <script type="text/javascript" src="js/jquery-1-11-1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+            (function ($) {
+                $.fn.menumaker = function (options) {
+                    var cssmenu = $(this), settings = $.extend({
+                        format: "dropdown",
+                        sticky: false
+                    }, options);
+                    return this.each(function () {
+                        $(this).find(".button").on('click', function () {
+                            $(this).toggleClass('menu-opened');
+                            var mainmenu = $(this).next('ul');
+                            if (mainmenu.hasClass('open')) {
+                                mainmenu.slideToggle().removeClass('open');
+                            }
+                            else {
+                                mainmenu.slideToggle().addClass('open');
+                                if (settings.format === "dropdown") {
+                                    mainmenu.find('ul').show();
+                                }
+                            }
+                        });
+                        cssmenu.find('li ul').parent().addClass('has-sub');
+                        multiTg = function () {
+                            cssmenu.find(".has-sub").prepend('<span class="submenu-button"></span>');
+                            cssmenu.find('.submenu-button').on('click', function () {
+                                $(this).toggleClass('submenu-opened');
+                                if ($(this).siblings('ul').hasClass('open')) {
+                                    $(this).siblings('ul').removeClass('open').slideToggle();
+                                }
+                                else {
+                                    $(this).siblings('ul').addClass('open').slideToggle();
+                                }
+                            });
+                        };
+                        if (settings.format === 'multitoggle') multiTg();
+                        else cssmenu.addClass('dropdown');
+                        if (settings.sticky === true) cssmenu.css('position', 'fixed');
+                        resizeFix = function () {
+                            var mediasize = 1000;
+                            if ($(window).width() > mediasize) {
+                                cssmenu.find('ul').show();
+                            }
+                            if ($(window).width() <= mediasize) {
+                                cssmenu.find('ul').hide().removeClass('open');
+                            }
+                        };
+                        resizeFix();
+                        return $(window).on('resize', resizeFix);
+                    });
+                };
+            })(jQuery);
+
+            (function ($) {
+                $(document).ready(function () {
+                    $("#cssmenu").menumaker({
+                        format: "multitoggle"
+                    });
+                });
+            })(jQuery);
+
+
+    </script>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" hreflang="en-us" />
+  
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+
+        <cc1:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" EnablePageMethods="true">
+        </cc1:ToolkitScriptManager>
+
+        <div class="header">
+            <div class="row">
+
+                <nav id="cssmenu" class="navbar navbar-expand-lg navbar-light bg-light nav-bar-inner-logo">
+
+                    <div id="head-mobile"></div>
+                    <a class="navbar-brand" href="default.aspx">
+                        <img src="images/jalagam-motors-w-logo.png" /></a>
+                    <div class="button"></div>
+                    <ul class="margin-top margin-left">
+                        <li class='active'><a href='Default.aspx'>HOME</a></li>
+
+
+                        <li><a href='#'>SHOP</a>
+
+                            <ul>
+                                <li><a href="Our-Products.aspx">PRODUCTS</a>
+
+                                </li>
+
+                                <li><a href="accessories-List.aspx">ACCESSORIES</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href='#'>MEDIA</a>
+
+                            <ul>
+                                <li><a href="photo-gallery-list.aspx">PHOTO GALLERY</a>
+                                </li>
+
+                                <li><a href="photo-gallery-list.aspx">PRESS RELEASE</a>
+                                </li>
+
+
+
+                            </ul>
+                        </li>
+                        <%--<li><a href='Default.aspx'>MEDIA</a></li>--%>
+                        <%--  <li><a href='photo-gallery-list.aspx'>GALLERY</a></li>--%>
+                        <li><a href="Add-Dealer.aspx">BECOME A DEALER</a></li>
+                        <li><a href="Branches-List.aspx">BRANCHES</a></li>
+                        <li><a href='Contactus.aspx'>CONTACT US</a></li>
+                        <li><a href='aboutus.aspx'>ABOUT US</a></li>
+                        <li><a href="Add-Test-Driving.aspx" class="test-btn" style="color: red!important;">TEST RIDE</a></li>
+                        <li><a href="<%=this.ResolveUrl("Sign-In.aspx")%>" class="test-login">LOG IN</a></li>
+
+
+
+
+
+
+
+
+
+                    </ul>
+                    <span style="float: right; color: #fff; text-align: center">
+                        <asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="false">
+                            <AnonymousTemplate>
+                            </AnonymousTemplate>
+
+
+
+
+
+
+
+                            <LoggedInTemplate>
+                                <div style="position: relative; top: -5px;">
+                                    Welcome: <span class="bold">
+                                        <asp:LoginName ID="HeadLoginName" runat="server" />
+                                    </span>!
+                           
+							<div style="margin-top: 5px">
+                                <span class="bold"><span class="glyphicon glyphicon-user"></span>
+                                    <asp:HyperLink ID="hlMyAccount" NavigateUrl="~/Dashboard.aspx" runat="server" Style="color: #fff;">My Account</asp:HyperLink>
+                                </span>&nbsp;&nbsp; <span class="glyphicon glyphicon-log-out"></span>&nbsp;<asp:LoginStatus
+                                    ID="HeadLoginStatus" runat="server" Style="color: #fff;" LogoutAction="Redirect"
+                                    LogoutText="Log Out" LogoutPageUrl="~/Default.aspx" />
+                            </div>
+                                </div>
+                            </LoggedInTemplate>
+                            <RoleGroups>
+                            </RoleGroups>
+                        </asp:LoginView>
+                    </span>
+
+                </nav>
+
+
+
+            </div>
+            
+        </div>
+                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                    </asp:ContentPlaceHolder>
+              
+        <div class="container-fluid footer-bg  padding-bottom-20">
+            <div class="teamgrids row">
+                <div class="col-md-4  col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>REACH US</h3>
+                        <div class="footer-list">
+                            <ul>
+                                <li>Jalagam Motors.<br />
+                                   
+                                </li>
+                                <li>
+                                    <div class="margin-top">
+                                        E-Mail: info@jalagammotors.com<br />
+
+
+                                        Mobile: 9848997066, 9246914369
+                               
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>FEATURED PRODUCTS</h3>
+                        <div class="footer-list">
+                            <ul>
+                                <li>Electric Cycle - Ampere Angel
+                                </li>
+                                <li>Electric Scooter - Ampere V48 
+                                </li>
+                                <li>Electric Indoor Mobility Vehicle - Ampere Trisul 
+                                </li>
+                                <li>E Trolley - Ampere E-Trolley
+                                </li>
+                                <li>Electric Load Carrier - Ampere Mitra 
+                                </li>
+                                <li>Electric Three Wheeler - Ampere ERikshaw 
+                                </li>
+                                <li>Electric Vehicle - Ampere Mitra WMS</li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 teamgrid1">
+
+                    <div class="teaminfo">
+                        <h3>CUSTOMER SERVICE</h3>
+                        <div class="footer-list">
+                            <ul>
+                                <li>Privacy Policy
+                                </li>
+                                <li>Quality Policy
+                                </li>
+                                <li>Shipping & Delivery
+                                </li>
+                                <li>Terms & Conditions
+                                </li>
+                                <li>Returns & Cancellation
+                                </li>
+                                <li>Disclaimer
+                                </li>
+
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-md-12 text-right">
+                    <ul class="list-inline ul-list">
+                        <li>
+                            <a href="https://www.facebook.com/RMN-Motors-249075525656675/">
+                                <img src="images/facebook-icon.png" /></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/MotorsRmn">
+                                <img src="images/twitter-icon.png" /></a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:mail@google.com">
+                                <img src="images/youtube-icon.png" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</body>
+</html>

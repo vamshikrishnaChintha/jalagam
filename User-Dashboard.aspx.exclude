@@ -1,0 +1,296 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Post-Ad.master" AutoEventWireup="true" CodeFile="User-Dashboard.aspx.cs" Inherits="Realestate_Agent_Dashboard" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Residential Sell List</b></h5>
+        </div>
+
+
+        <asp:GridView ID="gvResidentialSell" runat="server" DataKeyNames="Id" EmptyDataText="Not Yet Announced" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+
+
+                            <asp:Image ID="imgGvAdPhoto" runat="server" Width="80" Height="80" onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' />
+
+
+                            <asp:HyperLink runat="server"
+                                NavigateUrl='<%# String.Format("Residential-sell-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+
+
+
+
+                            <%-- <%#Eval("Title") %>--%>
+                        </div>
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete"  Visible="false"/>
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Residential Buy List</b></h5>
+        </div>
+        <asp:GridView ID="gvResidentialBuy" runat="server" DataKeyNames="Id" EmptyDataText="Not Yet Announced" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+                            <asp:HyperLink runat="server" NavigateUrl='<%# String.Format("Residential-Buy-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+                            <asp:Image CssClass="" ID="imgGvAdPhoto" runat="server" Width="80" Height="80"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'" />
+                        </div>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete" Visible="false" />
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Commercial Sell List</b></h5>
+        </div>
+
+
+        <asp:GridView ID="gvCommercialSell" runat="server" DataKeyNames="Id" EmptyDataText="Not Yet Announced" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+                            <%-- <asp:Image CssClass="img-outline" ID="imgGvAdPhoto" runat="server" Width="100px" Height="150px"
+                                ImageUrl='<%# "LoadPhoto.aspx?OwnerResdentialPhoto=" + Eval("Id")%>' />--%>
+                            <asp:Image ID="imgGvAdPhoto" runat="server" Width="80" Height="100" onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' />
+
+
+                            <asp:HyperLink runat="server"
+                                NavigateUrl='<%# String.Format("Commercial-Sell-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+
+
+                            <%#Eval("Title") %>
+                        </div>
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete" Visible="false" />
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Commercial Buy List</b></h5>
+        </div>
+
+
+        <asp:GridView ID="gvCommercialBuy" runat="server" DataKeyNames="Id" EmptyDataText="Not Yet Announced" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+                            <%-- <asp:Image CssClass="img-outline" ID="imgGvAdPhoto" runat="server" Width="100px" Height="150px"
+                                ImageUrl='<%# "LoadPhoto.aspx?OwnerResdentialPhoto=" + Eval("Id")%>' />--%>
+
+                             <asp:Image ID="imgGvAdPhoto" runat="server" Width="80" Height="100" onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' />
+                            <asp:HyperLink runat="server"
+                                NavigateUrl='<%# String.Format("Commercial-Buy-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+
+
+
+                            <%--  <%#Eval("Title") %>--%>
+                        </div>
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete" Visible="false" />
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Rent Out My Space List</b></h5>
+        </div>
+
+
+        <asp:GridView ID="gvRentOutMySpace" runat="server" DataKeyNames="Id" EmptyDataText="Not Yet Announced" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+                            <asp:Image ID="imgGvAdPhoto" runat="server" Width="80" Height="100" onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' />
+
+
+                            <asp:HyperLink runat="server"
+                                NavigateUrl='<%# String.Format("Rent-My-Space-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+
+
+
+
+                            <%--    <%#Eval("Title") %>--%>
+                        </div>
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete" Visible="false" />
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+    <div class="row padding">
+
+        <div class="head-color">
+            <h5><b>Looking For Rent</b></h5>
+        </div>
+
+
+        <asp:GridView ID="gvLookingRent" runat="server" DataKeyNames="Id" EmptyDataText="No Data" PagerSettings-Visible="true" CssClass="bg-color table table-bordered table-condensed"
+            ShowHeader="false" AutoGenerateColumns="false" AllowPaging="true" PageSize="3"
+            HorizontalAlign="center">
+            <Columns>
+                <asp:TemplateField HeaderText="">
+                    <ItemTemplate>
+                        <div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12 col-md-10 col-lg-10">
+                            <%--  <div class="row">
+
+                                <a href='J-Article-<%#Eval("JhalakArticle").ToString() %>'>
+                                    <asp:Label ID="lblJhalakArticle" runat="server" Text='<%#Eval("ArticleTitle") %>' ForeColor="Black" /></a>
+                            </div>--%>
+                             <asp:Image ID="imgGvAdPhoto" runat="server" Width="80" Height="100" onerror="if (this.src!='image/no-photo.png') this.src='images/no-photo.png'"
+                                ImageUrl='<%# "LoadPhoto.aspx?AdId=" + Eval("AdId")%>' />
+
+                            <asp:HyperLink runat="server"
+                                NavigateUrl='<%# String.Format("Looking-For-Rent-Description.aspx?Id={0}", Eval("AdId")) %>' Text='<%# Eval("Title") %>' ForeColor="Black"></asp:HyperLink>
+
+
+
+
+                            <%--  <%#Eval("Title") %>--%>
+                        </div>
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+                <asp:ButtonField ButtonType="Button" CommandName="Delete" Text="Delete" Visible="false" />
+                <%-- <asp:ButtonField ButtonType="Button" CommandName="Update" Text="Edit" />--%>
+            </Columns>
+            <PagerStyle CssClass="jhkpagination" />
+        </asp:GridView>
+
+
+
+
+    </div>
+
+
+
+</asp:Content>
+

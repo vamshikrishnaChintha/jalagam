@@ -1,0 +1,313 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Realestate_Agent_Dashboard : System.Web.UI.Page
+{
+    DcjalagamDataContext dbJalagam = new DcjalagamDataContext();
+  //  PublicMethods clsPublic = new PublicMethods();
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!Page.IsPostBack)
+        {
+
+            //BindGridViewCommercialBuy();
+            //BindGridViewCommercialSell();
+            //BindGridViewResidentialBuy();
+            //BindGridViewResidentailSell();
+            //BindGridViewRentOutMySpace();
+            //BindGridViewLookingRent();
+            //BindGridViewlSell();
+
+        }
+    }
+    protected void gvOwnerResidentialSell_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerSellId = Convert.ToInt32(gvResidentialSell.DataKeys[e.RowIndex].Values[0]);
+
+
+            RE_Residential_sell_Det objP = (from c in dbEmup.RE_Residential_sell_Dets
+                                            where c.SerNo == intOwnerSellId
+                                            select c).FirstOrDefault();
+
+            dbEmup.RE_Residential_sell_Dets.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            //  dbEMUP.Transaction.Rollback();
+        }
+        finally
+        {
+            this.BindGridViewResidentialSell();
+        }
+    }
+    private void BindGridViewlSell()
+    {
+        gvResidentialSell.DataSource = clsPublic.GetResidentialSell(Context.User.Identity.Name.ToString());
+        gvResidentialSell.DataBind();
+    }
+
+
+
+    protected void gvOwnerResidentialSell_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvResidentialSell.PageIndex = e.NewPageIndex;
+        this.BindGridViewResidentailSell();
+
+    }
+
+
+
+    protected void gvResidentialBuy_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerBuyId = Convert.ToInt32(gvResidentialBuy.DataKeys[e.RowIndex].Values[0]);
+
+
+            RE_Residential_Buy_Det objP = (from c in dbEmup.RE_Residential_Buy_Dets
+                                           where c.SerNo == intOwnerBuyId
+                                           select c).FirstOrDefault();
+
+            dbEmup.RE_Residential_Buy_Dets.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            //  dbEMUP.Transaction.Rollback();
+        }
+        finally
+        {
+            this.BindGridViewResidentialBuy();
+        }
+    }
+    private void BindGridViewResidentialBuy()
+    {
+        gvResidentialBuy.DataSource = clsPublic.GetResidentialBuy(Context.User.Identity.Name.ToString());
+        gvResidentialBuy.DataBind();
+    }
+    private void BindGridViewResidentialSell()
+    {
+        gvResidentialBuy.DataSource = clsPublic.GetResidentialSell(Context.User.Identity.Name.ToString());
+        gvResidentialBuy.DataBind();
+    }
+
+
+
+    protected void gvResidentialBuy_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvResidentialBuy.PageIndex = e.NewPageIndex;
+        this.BindGridViewResidentialBuy();
+
+    }
+
+
+    protected void gvCommercialSell_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerSellId = Convert.ToInt32(gvCommercialSell.DataKeys[e.RowIndex].Values[0]);
+
+            RE_Commercial_sell_Det objP = (from c in dbEmup.RE_Commercial_sell_Dets
+                                           where c.SerNo == intOwnerSellId
+                                           select c).FirstOrDefault();
+
+            dbEmup.RE_Commercial_sell_Dets.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            //  dbEMUP.Transaction.Rollback();
+        }
+        finally
+        {
+            this.BindGridViewCommercialSell();
+        }
+    }
+    private void BindGridViewResidentailSell()
+    {
+        gvCommercialSell.DataSource = clsPublic.GetResidentialSell(Context.User.Identity.Name.ToString());
+        gvCommercialSell.DataBind();
+    }
+    private void BindGridViewCommercialSell()
+    {
+        gvCommercialSell.DataSource = clsPublic.GetCommercialSell(Context.User.Identity.Name.ToString());
+        gvCommercialSell.DataBind();
+    }
+
+
+    protected void gvCommercialSell_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvCommercialSell.PageIndex = e.NewPageIndex;
+        this.BindGridViewCommercialSell();
+
+    }
+
+
+
+
+
+    protected void gvCommercialBuy_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        //gvOwnerResidentialSell.EditIndex = e.NewEditIndex;
+        //this.BindGridViewCommercialBuy();
+    }
+
+    protected void gvCommercialBuy_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerSellId = Convert.ToInt32(gvCommercialBuy.DataKeys[e.RowIndex].Values[0]);
+
+
+            RE_Commercial_Buy_Det objP = (from c in dbEmup.RE_Commercial_Buy_Dets
+                                          where c.SerNo == intOwnerSellId
+                                          select c).FirstOrDefault();
+
+            dbEmup.RE_Commercial_Buy_Dets.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            //  dbEMUP.Transaction.Rollback();
+        }
+        finally
+        {
+            this.BindGridViewCommercialBuy();
+        }
+    }
+    private void BindGridViewCommercialBuy()
+    {
+        gvCommercialBuy.DataSource = clsPublic.GetCommercialBuy(Context.User.Identity.Name.ToString());
+        gvCommercialBuy.DataBind();
+    }
+
+
+
+    protected void gvCommercialBuy_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvCommercialSell.PageIndex = e.NewPageIndex;
+        this.BindGridViewCommercialBuy();
+
+    }
+
+    protected void gvRentOutMySpace_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerSellId = Convert.ToInt32(gvRentOutMySpace.DataKeys[e.RowIndex].Values[0]);
+
+
+            RE_Rent_Residential objP = (from c in dbEmup.RE_Rent_Residentials
+                                         where c.SerNo == intOwnerSellId
+                                         select c).FirstOrDefault();
+
+            dbEmup.RE_Rent_Residentials.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+
+        }
+        finally
+        {
+            this.BindGridViewRentOutMySpace();
+        }
+    }
+    private void BindGridViewRentOutMySpace()
+    {
+        gvRentOutMySpace.DataSource = clsPublic.GetRentOutSpace(Context.User.Identity.Name.ToString());
+        gvRentOutMySpace.DataBind();
+    }
+
+
+
+    protected void gvRentOutMySpace_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvCommercialSell.PageIndex = e.NewPageIndex;
+        this.BindGridViewRentOutMySpace();
+
+    }
+
+
+
+    protected void gvLookingRent_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        try
+        {
+            int intOwnerSellId = Convert.ToInt32(gvLookingRent.DataKeys[e.RowIndex].Values[0]);
+
+
+            RE_Rent_Residential objP = (from c in dbEmup.RE_Rent_Residentials
+                                         where c.SerNo == intOwnerSellId
+                                         select c).FirstOrDefault();
+
+            dbEmup.RE_Rent_Residentials.DeleteOnSubmit(objP);
+
+
+            dbEmup.SubmitChanges();
+
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            //  dbEMUP.Transaction.Rollback();
+        }
+        finally
+        {
+            this.BindGridViewLookingRent();
+        }
+    }
+    private void BindGridViewLookingRent()
+    {
+        gvLookingRent.DataSource = clsPublic.GetLookingRent(Context.User.Identity.Name.ToString());
+        gvLookingRent.DataBind();
+    }
+
+
+
+    protected void gvLookingRent_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+
+        gvLookingRent.PageIndex = e.NewPageIndex;
+        this.BindGridViewLookingRent();
+
+    }
+}

@@ -1,0 +1,679 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using GoogleMaps.LocationServices;
+using System.Web.Security;
+using System.Security.Principal;
+using System.Data.SqlClient;
+using System.Data;
+public partial class Sign_Up : System.Web.UI.Page
+{
+
+	DcClassifiedsDataContext dbEMUP = new DcClassifiedsDataContext();
+	PublicMethods clsPublicMethods = new PublicMethods();
+	MailServicesCls clsMail = new MailServicesCls();
+
+	protected void Page_Load(object sender, EventArgs e)
+	{
+		string Password =Convert.ToString( TxtPwd.Text);
+		TxtPwd.Attributes.Add("value", Password);
+
+		string CPassword =Convert.ToString( TxtCfmPwd.Text);
+		TxtCfmPwd.Attributes.Add("value", CPassword);
+
+
+		this.Form.DefaultButton = this.btnSubmit.UniqueID;
+		if (!Page.IsPostBack)
+		{
+            HttpCookie rSessionCookie = new HttpCookie("ASP.NET_SessionId", "");
+            rSessionCookie.Expires = DateTime.Now.AddYears(-1);
+            Response.Cookies.Add(rSessionCookie);
+            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+            FormsAuthentication.SignOut();
+            Session.Abandon();
+            Session.Clear();
+
+            clsPublicMethods.FillDropDownList(GetCategoryList(), ddlCategory);
+
+            if ( Request.QueryString["V"] != null)
+            {
+              
+                GetData(Convert.ToInt16(Request.QueryString["V"]));
+                btnSubmit.Text = "Verify Now";
+                lblMsg.Text = "Please provide a valid email id";
+                chkBusiness.Checked = true;
+                divList.Style.Add("display", "block");
+               
+            }
+            else
+            {
+                ddlCategory.Items.Insert(0, "Select a category");
+            }
+			
+			
+
+		}
+
+	}
+	protected void btnSubmit_Click(object sender, EventArgs e)
+	{
+        if (btnSubmit.Text == "Verify Now")
+        {
+            DeleteRecord(Convert.ToInt16(Request.QueryString["V"]));
+        }
+        foreach (HttpPostedFile postedFile in fupLogo.PostedFiles)
+        {
+
+            if (postedFile.ContentLength > 2048000)
+            {
+                lblMsg.Text = "<div class='err-msg'>" + "Logo Size should not Exceed 2 MB" + "</div>";
+                return;
+            }
+        }
+
+        Save();
+        
+	}
+
+    private void UpdateData(Int16 userSerNo)
+    {
+        //if (clsPublicMethods.ValidateUser(Convert.ToString(TxtEmail.Text)) == true)
+        //{
+        //    lblMsg.Text = "Email Id already exist";
+        //    return;
+        //}
+
+        UserDet objU;
+
+        objU = dbEMUP.UserDets.SingleOrDefault(objOrg => objOrg.UserSerNo == userSerNo);
+        objU.Name = Convert.ToString(TxtName.Text);
+        objU.EmailId = Convert.ToString(TxtEmail.Text);
+        objU.Password = Convert.ToString(TxtPwd.Text);
+        
+
+        if (Convert.ToString(TxtContact.Text) != "")
+        {
+            string strPhone = Convert.ToString(TxtContact.Text);
+
+            objU.ContactNo = string.Format("({0}) {1}-{2}", strPhone.Substring(0, 3), strPhone.Substring(3, 3), strPhone.Substring(6, 4));
+        }
+        else
+        {
+            objU.ContactNo = "N/A";
+        }
+
+        objU.City = Convert.ToString(txtCity.Text);
+
+        if (rdFree.Checked == true)
+        {
+            objU.UserType = "Free";
+        }
+        else if (rdPremium.Checked == true)
+        {
+            objU.UserType = "Premium";
+        }
+        else
+        {
+            objU.UserType = "Free";
+        }
+
+        if (chkBusiness.Checked == true)
+        {
+
+            objU.Role = "Business";
+            objU.CategoryId = Convert.ToInt16(ddlCategory.SelectedValue);
+            if (Convert.ToString(txtBusinessName.Text) != "")
+            {
+                objU.BusinessName = Convert.ToString(txtBusinessName.Text);
+            }
+            else
+            {
+                lblMsg.Text = "Please Enter Your Business Name !";
+                return;
+            }
+            if (Convert.ToString(TxtLocation.Text) == "")
+            {
+                lblMsg.Text = "Please Enter Your Business Location !";
+                return;
+            }
+            if (Convert.ToString(txtLocationOperations.Text) == "")
+            {
+                lblMsg.Text = "Please Enter Your Business City !";
+                return;
+            }
+        //    clsMail.AcctUpdatedBusiness(Convert.ToString(objU.Name), Convert.ToString(objU.EmailId), Convert.ToString(objU.BusinessName), Convert.ToString(objU.CategoryDet.Categoryname));
+            if (txtBusinessContact.Text != "")
+            {
+
+                string strBPhone = Convert.ToString(txtBusinessContact.Text);
+
+                objU.BusinessContact = string.Format("({0}) {1}-{2}", strBPhone.Substring(0, 3), strBPhone.Substring(3, 3), strBPhone.Substring(6, 4));
+            }
+            else
+            {
+                objU.BusinessContact = "";
+            }
+
+            if (Convert.ToString(TxtLocation.Text) != "")
+            {
+                objU.Location = Convert.ToString(TxtLocation.Text);
+                GetLongAlt(Convert.ToString(TxtLocation.Text));
+            }
+            else
+            {
+                objU.Location = Convert.ToString(txtLocationOperations.Text);
+                GetLongAlt(Convert.ToString(txtLocationOperations.Text));
+            }
+            if (Convert.ToString(txtZip.Text) == "")
+            {
+
+                try
+                {
+                    objU.ZipCode = Convert.ToString(clsPublicMethods.GetFormattedZipCode(Convert.ToString(txtLocationOperations.Text).Split(',')[0], Convert.ToString(txtLocationOperations.Text).Split(',')[1]));
+                }
+                catch (Exception ex)
+                {
+                    lblMsg.Text = "<div class='err-msg'>" + " To Get Clear Visibility of Your ad at Location, City Format must be in City, State and Country, Example : Cumming,GA,United State" + "</div>";
+                    return;
+                }
+            }
+            else
+            {
+                objU.ZipCode = Convert.ToString(txtZip.Text);
+            }
+            objU.OperationLocatoin = Convert.ToString(txtLocationOperations.Text);
+            //objU.Website = Convert.ToString(txtWebsite.Text);
+            #region URL with http
+
+            if (Convert.ToString(txtWebsite.Text) != "")
+            {
+                objU.Website = Convert.ToString(txtWebsite.Text);
+                if ((Convert.ToString(txtWebsite.Text).Contains("http://")) || (Convert.ToString(txtWebsite.Text).Contains("https://")))
+                {
+                    objU.Website = Convert.ToString(txtWebsite.Text);
+                }
+                else
+                {
+                    objU.Website = "http://" + "" + Convert.ToString(txtWebsite.Text);
+                }
+            }
+            else
+            {
+                objU.Website = "";
+            }
+
+            #endregion
+            objU.AboutUs = Convert.ToString(txtAbtUs.Text);
+
+            objU.Latitude = Convert.ToString(litLat.Text);
+            objU.Longitude = Convert.ToString(litLong.Text);
+
+            if (fupLogo.HasFile)
+            {
+                using (System.IO.BinaryReader reader = new System.IO.BinaryReader(fupLogo.PostedFile.InputStream))
+                {
+                    objU.BusinessLogo = reader.ReadBytes(fupLogo.PostedFile.ContentLength);
+                }
+            }
+            if (fupFlyer.HasFile)
+            {
+                using (System.IO.BinaryReader reader = new System.IO.BinaryReader(fupFlyer.PostedFile.InputStream))
+                {
+                    objU.BusinessFlyer = reader.ReadBytes(fupFlyer.PostedFile.ContentLength);
+                }
+            }
+        }
+
+
+
+        else
+        {
+            objU.Role = "";
+
+            objU.CategoryId = null;
+
+            objU.BusinessName = null;
+
+
+            objU.BusinessContact = "";
+
+            objU.ZipCode = "";
+
+            objU.OperationLocatoin = "";
+            objU.Location = "";
+            objU.Website = "";
+
+
+
+            objU.AboutUs = "";
+
+            objU.Latitude = "";
+            objU.Longitude = "";
+            objU.BusinessLogo = null;
+        }
+
+
+        objU.CreatedDate = DateTime.Now;
+        try
+        {
+            dbEMUP.SubmitChanges();
+            GetData(Convert.ToInt16(Request.QueryString["V"]));
+            lblMsg.Text = "Verification Completed.. Please check your registred mail";
+            clsMail.SignUpConfirmation(Convert.ToString(TxtEmail.Text), Convert.ToString(TxtName.Text), "http://jhalak.com/Sign-In.aspx?v=s&Id=" + objU.UserSerNo);
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+
+        }
+
+
+
+    }
+    private void Save()
+	{
+		if (Page.IsValid)
+		{
+
+			Page.Form.Attributes.Add("enctype", "multipart/form-data");
+			//divList.Visible = false;
+			if (clsPublicMethods.ValidateUser(Convert.ToString(TxtEmail.Text)) == true)
+			{
+				lblMsg.Text = "Email Id already exist";
+				return;
+			}
+
+			UserDet objU = new UserDet();
+			objU.Name = Convert.ToString(TxtName.Text);
+			objU.EmailId = Convert.ToString(TxtEmail.Text);
+
+			if (Convert.ToString(TxtContact.Text) != "")
+			{
+				string strPhone = Convert.ToString(TxtContact.Text);
+
+				objU.ContactNo = string.Format("({0}) {1}-{2}", strPhone.Substring(0, 3), strPhone.Substring(3, 3), strPhone.Substring(6, 4));
+			}
+			else
+			{
+				objU.ContactNo = "N/A";
+			}
+
+			objU.Password = Convert.ToString(TxtPwd.Text);
+			objU.Location = Convert.ToString(TxtLocation.Text);
+			objU.City = Convert.ToString(txtCity.Text);
+			//objU.ZipCode = Convert.ToString(txtZip.Text);
+			objU.Status = "Active";
+            objU.Verified = "Verified";
+
+			//if (rdFree.Checked == true)
+			//{
+			//	objU.UserType = "Free";
+			//}
+			//else if (rdPremium.Checked == true)
+			//{
+			//	objU.UserType = "Premium";
+			//}
+			//else
+			//{
+				objU.UserType = "Free";
+			//}
+
+			if (chkBusiness.Checked == true)
+			{
+				if (ddlCategory.SelectedIndex == 0)
+				{
+					lblMsg.Text = "Select a Category !";
+					return;
+				}
+				if (Convert.ToString(txtBusinessName.Text) == "")
+				{
+					lblMsg.Text = "Please Enter Your Business Name !";
+					return;
+				}
+				if (Convert.ToString(TxtLocation.Text) == "")
+				{
+					lblMsg.Text = "Please Enter Your Business Location !";
+					return;
+				}
+				if (Convert.ToString(txtLocationOperations.Text) == "")
+				{
+					lblMsg.Text = "Please Enter Your Business City !";
+					return;
+				}
+
+
+
+				objU.Role = "Business";
+				objU.CategoryId = Convert.ToInt16(ddlCategory.SelectedValue);
+				objU.BusinessName = Convert.ToString(txtBusinessName.Text);
+				//if (Convert.ToString(txtZip.Text) == "")
+				//{
+
+				//	try
+				//	{
+				//		objU.ZipCode = Convert.ToString(clsPublicMethods.GetFormattedZipCode(Convert.ToString(txtLocationOperations.Text).Split(',')[0], Convert.ToString(txtLocationOperations.Text).Split(',')[1]));
+				//	}
+				//	catch (Exception ex)
+				//	{
+				//		lblMsg.Text = "<div class='err-msg'>" + " To Get Clear Visibility of Your ad at Location, City Format must be in City, State and Country, Example : Cumming,GA,United State" + "</div>";
+				//		return;
+				//	}
+				//}
+				//else
+				//{
+				//	objU.ZipCode = Convert.ToString(txtZip.Text);
+				//}
+				if (txtBusinessContact.Text != "")
+				{
+					string strBPhone = Convert.ToString(txtBusinessContact.Text);
+
+					objU.BusinessContact = string.Format("({0}) {1}-{2}", strBPhone.Substring(0, 3), strBPhone.Substring(3, 3), strBPhone.Substring(6, 4));
+				}
+				else
+				{
+					objU.BusinessContact = "";
+				}
+
+				// objU.BusinessContact = Convert.ToString(txtBusinessContact.Text);
+				objU.OperationLocatoin = Convert.ToString(txtLocationOperations.Text);
+				//objU.Website = Convert.ToString(txtWebsite.Text);
+				#region URL with http
+				if (Convert.ToString(txtWebsite.Text) != "")
+				{
+
+					if ((Convert.ToString(txtWebsite.Text).Contains("http://")) || (Convert.ToString(txtWebsite.Text).Contains("https://")))
+					{
+						objU.Website = Convert.ToString(txtWebsite.Text);
+					}
+					else
+					{
+						objU.Website = "http://" + "" + Convert.ToString(txtWebsite.Text);
+					}
+				}
+				else
+				{
+					objU.Website = "";
+				}
+
+
+				#endregion
+				objU.AboutUs = Convert.ToString(txtAbtUs.Text);
+                
+                if (fupLogo.HasFile)
+				{
+					using (System.IO.BinaryReader reader = new System.IO.BinaryReader(fupLogo.PostedFile.InputStream))
+					{
+						objU.BusinessLogo = reader.ReadBytes(fupLogo.PostedFile.ContentLength);
+					}
+				}
+				if (fupFlyer.HasFile)
+				{
+					using (System.IO.BinaryReader reader = new System.IO.BinaryReader(fupFlyer.PostedFile.InputStream))
+					{
+						objU.BusinessFlyer = reader.ReadBytes(fupFlyer.PostedFile.ContentLength);
+					}
+				}
+			}
+			else
+			{
+				objU.Role = "";
+			}
+            try
+            {
+                clsPublicMethods.GetLatLong(Convert.ToString(txtCity.Text).Split(',')[0], Convert.ToString(txtCity.Text).Split(',')[1]);
+                clsPublicMethods.GetZipCode(Convert.ToString(txtCity.Text).Split(',')[0], Convert.ToString(txtCity.Text).Split(',')[1]);
+            }
+            catch
+            {
+                lblMsg.Text = "Disable AD Blockers in Your browser. Enter Your City Name, State Code !";
+                return;
+            }
+            objU.Latitude = clsPublicMethods.salti;
+            objU.Longitude = clsPublicMethods.slong;
+            objU.ZipCode = clsPublicMethods.zipcode;
+            objU.CreatedDate = DateTime.Now;
+
+			try
+
+			{
+				dbEMUP.UserDets.InsertOnSubmit(objU);
+				dbEMUP.Connection.Open();
+				dbEMUP.Transaction = dbEMUP.Connection.BeginTransaction();
+				dbEMUP.SubmitChanges();
+				if (Convert.ToString(txtBusinessName.Text) != "")
+				{
+					SaveSubCategory();
+				}
+
+
+				dbEMUP.Transaction.Commit();
+				clsMail.SignUpConfirmation(Convert.ToString(TxtEmail.Text), Convert.ToString(TxtName.Text), "http://jhalak.com/Sign-In.aspx?Id=" + objU.UserSerNo);
+                if (rdPremium.Checked == true)
+                {
+                    //  Response.Redirect("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick" + " &hosted_button_id=" + "VSL9UAE34FPFS" + "&amount=" + Convert.ToString("1") + "&return=http://classifieds.jhalak.com/Sign-In.aspx?S=" + "Pre" + "&Id = " + objU.UserSerNo, false);
+                    Response.Redirect("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick" + " &hosted_button_id=" + "VSL9UAE34FPFS" + "&amount=" + Convert.ToString("100") + "&return=http://jhalak.com/Sign-In.aspx?Id=" + objU.UserSerNo, false);
+                }
+                //else
+                //{
+
+                //    Response.Redirect("Sign-In.aspx?S=" + "Yes");
+                //}
+              
+
+            }
+			catch (Exception ex)
+			{
+				    dbEMUP.Transaction.Rollback();
+				throw ex;
+			}
+            finally
+            {
+                Response.Redirect("Sign-In.aspx?S=" + "Yes");
+            }
+
+
+		}
+	}
+
+	protected void ddlCategory_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (ddlCategory.SelectedIndex != 0)
+		{
+			divList.Style.Add("display", "block");
+			clsPublicMethods.FillCheckBoxList(GetSubCategoryList(Convert.ToInt16(ddlCategory.SelectedValue)), chkSubCategory);
+		}
+		else
+		{
+			chkSubCategory.Items.Clear();
+		}
+	}
+
+
+
+
+	private void SaveSubCategory()
+	{
+
+
+		for (int i = 0; i <= chkSubCategory.Items.Count - 1; i++)
+		{
+			if (chkSubCategory.Items[i].Selected == true)
+			{
+				UserSubCategoryDet objS = new UserSubCategoryDet();
+
+				objS.UserId = Convert.ToString(TxtEmail.Text);
+				objS.SubCategoryId = Convert.ToInt16(chkSubCategory.Items[i].Value);
+
+				dbEMUP.UserSubCategoryDets.InsertOnSubmit(objS);
+				dbEMUP.SubmitChanges();
+			}
+		}
+	}
+
+	private void GetLongAlt(string address)
+	{
+
+        //var locationService = new GoogleLocationService();
+        clsPublicMethods.GetLatLong(Convert.ToString(txtCity.Text).Split(',')[0], Convert.ToString(txtCity.Text).Split(',')[1]);
+
+        litLat.Text = Convert.ToString(clsPublicMethods.salti);
+		litLong.Text = Convert.ToString(clsPublicMethods.slong);
+	}
+	public IQueryable GetSubCategoryList(int intCatId)
+	{
+
+		var objC = from objL in dbEMUP.SignupSubcategoryDets
+				   where objL.CategoryId == intCatId
+				   select new
+				   {
+					   Value = objL.SubCategoryId,
+					   Text = objL.SubCategoryname
+
+				   };
+
+		return objC;
+
+
+
+	}
+	private IQueryable GetCategoryList()
+	{
+
+		var objC = from objL in dbEMUP.SignupCategoryDets
+				   orderby objL.Categoryname ascending
+				   select new
+				   {
+					   Value = objL.CategoryId,
+					   Text = objL.Categoryname
+
+				   };
+
+		return objC;
+
+
+
+	}
+	protected void chkBusiness_CheckedChanged(object sender, EventArgs e)
+	{
+		if (chkBusiness.Checked == true)
+		{
+			divList.Visible = true;
+		}
+		else
+		{
+			divList.Visible = false;
+		}
+	}
+
+
+
+    #region
+    private void GetData(Int16 userSerNo)
+    {
+        var objU = from objD in dbEMUP.UserDets
+                   where objD.UserSerNo == userSerNo
+                   select objD;
+
+        UserDet objUD = objU.SingleOrDefault();
+        TxtName.Text = Convert.ToString(objUD.Name);
+      //  TxtEmail.Text = Convert.ToString(objUD.EmailId);
+        TxtContact.Enabled = false;
+        if (Convert.ToString(objUD.ContactNo) != "" && objUD.ContactNo != null)
+        {
+            string strContact = Convert.ToString(objUD.ContactNo.Replace("(", ""));
+            strContact = strContact.Replace(")", "");
+            strContact = strContact.Replace("-", "");
+            strContact = strContact.Replace(" ", "");
+
+            TxtContact.Text = strContact;
+        }
+
+        TxtLocation.Text = Convert.ToString(objUD.Location);
+       
+        txtCity.Text = Convert.ToString(objUD.City);
+        txtZip.Text = Convert.ToString(objUD.ZipCode);
+
+
+       
+
+            rdPremium.Checked = true;
+        
+
+
+
+
+        if (Convert.ToString(objUD.CategoryId) != "")
+        {
+            ddlCategory.SelectedValue = Convert.ToString(objUD.CategoryId);
+        }
+
+        if (Convert.ToString(objUD.BusinessName) != "")
+        {
+            txtBusinessName.Text = Convert.ToString(objUD.BusinessName);
+        }
+        if (Convert.ToString(objUD.ContactNo) != "" && objUD.ContactNo != null)
+        {
+            string strBContact = Convert.ToString(objUD.ContactNo.Replace("(", ""));
+            strBContact = strBContact.Replace(")", "");
+            strBContact = strBContact.Replace("-", "");
+            strBContact = strBContact.Replace(" ", "");
+
+
+            txtBusinessContact.Text = strBContact;
+        }
+
+        //if (Convert.ToString(objUD.OperationLocatoin) != "")
+        //{
+        //    txtLocationOperations.Text = Convert.ToString(objUD.OperationLocatoin);
+        //}
+        if (Convert.ToString(objUD.AboutUs) != "")
+        {
+            txtAbtUs.Text = Convert.ToString(objUD.AboutUs);
+        }
+        if (Convert.ToString(objUD.Website) != "")
+        {
+            txtWebsite.Text = Convert.ToString(objUD.Website);
+        }
+
+
+        //if (objUD.Role == "Business")
+        //{
+        //	chkBusiness.Checked = true;
+        //	divList.Style.Add("display", "block");
+        //}
+        //else
+        //{
+        //	chkBusiness.Checked = false;
+        //	divList.Style.Add("display", "none");
+        //}
+
+    }
+
+    #endregion
+
+    private void DeleteRecord(Int16 intSerNo)
+    {
+        string con = System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+        SqlConnection connection = new SqlConnection(con);
+
+        string sqlStatement = "DELETE FROM userdet WHERE userserno = @userserno";
+
+        try
+        {
+            connection.Open();
+            SqlCommand cmd = new SqlCommand(sqlStatement, connection);
+            cmd.Parameters.AddWithValue("@userserno",intSerNo);
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();
+
+        }
+        finally
+        {
+            connection.Close();
+        }
+    }
+}

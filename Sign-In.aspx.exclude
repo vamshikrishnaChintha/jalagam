@@ -1,0 +1,145 @@
+﻿<%@ Page Title="Login " Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Sign-In.aspx.cs" Inherits="Account_Login" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    
+    <asp:UpdatePanel runat="server">
+        <ContentTemplate>
+             
+            <div class="jhkfrm row margin">
+                <div class="col-sm-12">
+                    <div class="col-sm-6 login-centered">
+                        <div class="col-sm-12 txtcenter">
+
+                            <asp:Label ID="lblSignin" runat="server" Text=""></asp:Label>
+
+                        </div>
+                         
+    
+   
+                        <asp:Label ID="lblforgot" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="txtname" runat="server" Text=""></asp:Label>
+                        <div class="userlog row txtcenter">
+                            <img src="images/manager-login-bg.png" /><br />
+                            <b>Sign in</b>
+                           <%-- <div id="auth-status" >
+                                <div id="auth-loggedout">
+
+                                    <div class="fb-login-button" autologoutlink="true" scope="email,user_checkins">Login with Facebook</div>
+                                </div>
+                                <div id="auth-loggedin" style="display: none">
+                                    Hi, <span id="auth-displayname"></span>(<a href="Default.aspx?L=out" id="auth-logoutlink">logout</a>)
+                                </div>
+                            </div>--%>
+                        </div>
+                        <div>
+                            <div>
+                                <label>
+                                    <span>User name:<b class="frm-mandate"> *</b></span>
+                                    <asp:TextBox ID="txtUserId" runat="server" placeholder="Enter valid mail id" />
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator13" runat="server" ValidationGroup="vgSignin" ControlToValidate="txtUserId" Display="None" ErrorMessage="User mail id is required!<br>Please make sure to enter the organizer user mail id." />
+                                    <cc1:ValidatorCalloutExtender ID="ValidatorCalloutExtender1" runat="server" TargetControlID="RequiredFieldValidator13" Width="220" CloseImageUrl="images/alert-close.png" WarningIconImageUrl="images/alert-img.png" />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>Password:<b class="frm-mandate">*</b></span>
+                                    <asp:TextBox ID="txtPwd" runat="server" TextMode="Password" placeholder="Enter Password" />
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ValidationGroup="vgsignin" ControlToValidate="txtPwd" Display="None" ErrorMessage="password is required!<br>Please make sure to enter the password." />
+                                    <cc1:ValidatorCalloutExtender ID="ValidatorCalloutExtender2" runat="server" TargetControlID="RequiredFieldValidator1" Width="220" CloseImageUrl="images/alert-close.png" WarningIconImageUrl="images/alert-img.png" />
+                                </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-xs-12 radio-inline">
+
+                                    <span>
+                                        <asp:CheckBox ID="chkRememberPwd" CssClass="checkbox-inline" Text="Remember Password?" runat="server" />
+                                        <%--<asp:RadioButton ID="rdPwd" Text="Remember Password?" runat="server" />--%>
+                                    </span>
+
+                                </div>
+                                <div class="col-sm-6 col-xs-12 fgtpwd">
+
+                                    <i class="fa fa-lock fa-2x" aria-hidden="true"></i>
+                                    <asp:Button ID="btnForgotPwd" runat="server" Text="Forgot Password" OnClick="btnForgotPwd_Click" />
+                                   
+                                </div>
+                            </div>
+                            <div class="sub-btn">
+                                <asp:Button ID="btnSignIn" CssClass="sub-btn" runat="server" ValidationGroup="vgsignin" Text="Submit" OnClick="btnSignIn_Click" />
+                            </div>
+                          <%--   <a class="signup-btn" href="#"    onclick="loginByFacebook();">Login with Facebook</a>--%>
+                          
+                            <div class="row">
+                                <div class="col-sm-3">
+
+                                
+                            <a href="#"  onclick="loginByFacebook();">
+                                <div class="facebook-btn" style="text-align: center">
+                                    <i class="fa fa-facebook fa-2x"></i>&nbsp;&nbsp; Facebook
+                                </div>
+                            </a>
+                                </div>
+                                    
+
+                                    <div class="col-sm-3">
+                                        </div>
+                                <div class="col-sm-3">
+                                        </div>
+                            </div>
+
+
+                            <a  href="Sign-Up.aspx">
+                                <div class="signup-btn" style="text-align: center">
+                                    <i class="fa fa-user fa-2x"></i>&nbsp;&nbsp;New user sign up!
+                                </div>
+                            </a>
+                            <div id="fb-root"></div>  
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                                    window.fbAsyncInit = function () {
+                                        FB.init({
+                                            appId: '293009461136512',
+                                            status: true, // check login status
+                                            cookie: true, // enable cookies to allow the server to access the session
+                                            xfbml: true, // parse XFBML
+                                            oauth: true // enable OAuth 2.0
+                                        });
+                                    };
+                                    (function () {
+                                        var e = document.createElement('script'); e.async = true;
+                                        e.src = document.location.protocol +
+                                            '//connect.facebook.net/en_US/all.js';
+                                        document.getElementById('fb-root').appendChild(e);
+                                    }());
+
+                                    function loginByFacebook() {
+                                        FB.login(function (response) {
+                                            if (response.authResponse) {
+                                                FacebookLoggedIn(response);
+                                            } else {
+                                                console.log('User cancelled login or did not fully authorize.');
+                                            }
+                                        }, { scope: 'user_birthday,user_about_me,user_hometown,user_location,email,publish_stream' });
+                                    }
+
+                                    function FacebookLoggedIn(response) {
+                                        var loc = '/callback.aspx';
+                                        if (loc.indexOf('?') > -1)
+                                            window.location = loc + '&authprv=facebook&access_token=' + response.authResponse.accessToken;
+                                        else
+                                            window.location = loc + '?authprv=facebook&access_token=' + response.authResponse.accessToken;
+                                    }
+    </script>
+
+            </div>
+
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</asp:Content>
